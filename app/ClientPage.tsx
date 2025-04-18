@@ -7,46 +7,9 @@ import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import HeroSection from "./components/Home/Hero"
 import AwardsSection from "./components/Home/Awards"
+import TeamSection from "./components/Home/Team"
 
 export default function ClientPage() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  let isDown = false
-  let startX: number
-  let scrollLeft: number
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    isDown = true
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = "grabbing"
-      startX = e.pageX - scrollContainerRef.current.offsetLeft
-      scrollLeft = scrollContainerRef.current.scrollLeft
-    }
-  }
-
-  const handleMouseLeave = () => {
-    isDown = false
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = "grab"
-    }
-  }
-
-  const handleMouseUp = () => {
-    isDown = false
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = "grab"
-    }
-  }
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDown) return
-    e.preventDefault()
-    if (scrollContainerRef.current) {
-      const x = e.pageX - scrollContainerRef.current.offsetLeft
-      const walk = (x - startX) * 2
-      scrollContainerRef.current.scrollLeft = scrollLeft - walk
-    }
-  }
-
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     loop: false,
@@ -75,35 +38,7 @@ export default function ClientPage() {
     <>
       <HeroSection></HeroSection>
       <AwardsSection></AwardsSection>
-
-      {/* Team Section */}
-      <section className="py-20 px-4 bg-gray-900">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h2 className="text-3xl font-medium text-custom-red-500">
-              Meet Our Masterful Chefs – The Heart of Our Kitchen
-            </h2>
-            <p className="text-gray-300">
-              From hand-rolled sushi and fiery stir-fries to rich curries and perfectly grilled meats, our chefs craft
-              each dish with precision and creativity. Their dedication to sourcing the finest ingredients and
-              maintaining the highest standards ensures an unforgettable dining experience every time you visit.
-            </p>
-            <div className="flex gap-4 text-custom-red-500">
-              <span>01</span>
-              <span className="border-t border-custom-red-500 flex-grow mt-3"></span>
-              <span>05</span>
-            </div>
-          </div>
-          <div className="relative h-[400px]">
-            <Image
-              src="/placeholder.svg?height=400&width=600"
-              alt="Chef presenting a dish"
-              fill
-              className="object-cover rounded-lg"
-            />
-          </div>
-        </div>
-      </section>
+      <TeamSection></TeamSection>
 
       {/* Courses Section */}
       <section id="menu" className="py-20 bg-black">
