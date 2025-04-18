@@ -6,6 +6,7 @@ import Image from "next/image"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import HeroSection from "./components/Home/Hero"
+import AwardsSection from "./components/Home/Awards"
 
 export default function ClientPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -73,35 +74,7 @@ export default function ClientPage() {
   return (
     <>
       <HeroSection></HeroSection>
-
-      {/* Awards Section */}
-      <section className="py-20 px-4 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="grid grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="aspect-square relative overflow-hidden rounded-lg">
-                  <Image
-                    src="/placeholder.svg?height=200&width=200"
-                    alt="Culinary creation"
-                    fill
-                    className="object-cover hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-3xl font-medium text-custom-red-500">No. 1</h2>
-              <p className="text-2xl font-medium text-white">Newest Pan Asia Restaurant in Dhaka</p>
-              <p className="text-custom-red-300">
-                Experience the rich flavors of Pan-Asian cuisine in the heart of Dhaka. Our restaurant offers a
-                delightful fusion of Chinese, Thai, Japanese, and Korean dishes, crafted with authentic ingredients and
-                bold flavors. Visit us for an unforgettable dining experience!
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AwardsSection></AwardsSection>
 
       {/* Team Section */}
       <section className="py-20 px-4 bg-gray-900">
