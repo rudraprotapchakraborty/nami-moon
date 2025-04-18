@@ -3,27 +3,12 @@
 import type React from "react"
 import { useRef, useCallback, useEffect } from "react"
 import Image from "next/image"
-import useEmblaCarousel from "embla-carousel-react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import HeroSection from "./components/Home/Hero"
 import AwardsSection from "./components/Home/Awards"
 import TeamSection from "./components/Home/Team"
+import MenuSection from "./components/Home/Menu"
 
 export default function ClientPage() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
-    loop: false,
-    dragFree: true,
-  })
-
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev()
-  }, [emblaApi])
-
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext()
-  }, [emblaApi])
-
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY
@@ -37,54 +22,9 @@ export default function ClientPage() {
   return (
     <>
       <HeroSection></HeroSection>
+      <MenuSection></MenuSection>
       <AwardsSection></AwardsSection>
       <TeamSection></TeamSection>
-
-      {/* Courses Section */}
-      <section id="menu" className="py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-medium text-center mb-12 text-custom-red-500">OUR MENU</h2>
-          <div className="relative">
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex gap-6">
-                {courses.map((course, index) => (
-                  <div key={index} className="flex-[0_0_280px] md:flex-[0_0_320px] min-w-0">
-                    <div className="group relative overflow-hidden rounded-lg cursor-pointer">
-                      <div className="relative h-64">
-                        <Image
-                          src="/placeholder.svg?height=300&width=400"
-                          alt={course.name}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                      </div>
-                      <div className="absolute inset-0 bg-black/60 flex flex-col justify-end p-6">
-                        <h3 className="text-sm font-bold mb-2 uppercase">{course.name}</h3>
-                        <p className="text-gold">{course.price}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button
-              onClick={scrollPrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/80 text-white p-2 rounded-full hover:bg-black transition-colors"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              onClick={scrollNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/80 text-white p-2 rounded-full hover:bg-black transition-colors"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* Who We Are Section */}
       <section className="py-20 bg-black">
         <div className="container mx-auto px-4">
@@ -127,43 +67,4 @@ export default function ClientPage() {
     </>
   )
 }
-
-const courses = [
-  {
-    name: "THE SYMPHONY",
-    price: "500 ৳",
-  },
-  {
-    name: "THE EXPERIENCE",
-    price: "500 ৳",
-  },
-  {
-    name: "OMAKASE COURSE",
-    price: "500 ৳",
-  },
-  {
-    name: "OMAKASE COURSE",
-    price: "500 ৳",
-  },
-  {
-    name: "OMAKASE COURSE",
-    price: "500 ৳",
-  },
-  {
-    name: "VALENTINE'S DAY",
-    price: "500 ৳",
-  },
-  {
-    name: "OMAKASE COURSE",
-    price: "500 ৳ (Lunch only)",
-  },
-  {
-    name: "WAGYU OMAKASE COURSE",
-    price: "500 ৳",
-  },
-  {
-    name: "WAGYU OMAKASE COURSE",
-    price: "500 ৳",
-  },
-]
 

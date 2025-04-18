@@ -1,0 +1,179 @@
+{
+    "Appetizers": [
+      {"name": "Chicken & Prawn Suimai", "price": 385},
+      {"name": "Chicken Nanban", "price": 475},
+      {"name": "Prawn Hargao", "price": 435},
+      {"name": "Nori Dark Suimai", "price": 435},
+      {"name": "Wanton in Chilli Oil", "price": 385},
+      {"name": "Garlic Prawn Soft Roll", "price": 495},
+      {"name": "Prawn and Cream Cheese Rangoon", "price": 410},
+      {"name": "Prawn Tempura", "price": 685},
+      {"name": "Corn and Cream Cheese Dumplings", "price": 345},
+      {"name": "Chicken Cabbage Roll", "price": 380}
+    ],
+    "Sushi": [
+      {"name": "Ebi Yaki Sushi", "price_5pcs": 685, "price_10pcs": 1150},
+      {"name": "Chicken Teriyaki Roll", "price_5pcs": 339, "price_10pcs": 629},
+      {"name": "Salmon Aburi Sushi (2 pcs)", "price": 379},
+      {"name": "Prawn Aburi Sushi (2 pcs)", "price": 349},
+      {"name": "Prawn Volcano Sushi", "price_5pcs": 449, "price_10pcs": 849},
+      {
+        "name": "Sushi Platter (12 pcs)",
+        "price": 1199,
+        "description": "Includes 3 pcs Ebi Yaki Sushi, 3 pcs Prawn Volcano Sushi, 3 pcs Chicken Teriyaki Roll, and 3 pcs Vegetable Sushi"
+      }
+    ],
+    "Soup": [
+      {"name": "Cream of Mushroom", "price": 350},
+      {"name": "Chicken Wonton Soup", "price": 400},
+      {"name": "Nami Moon Special Seafood Soup", "price": 415}
+    ],
+    "Noodles": [
+      {
+        "name": "Chef Special Chicken Noodles",
+        "price": 440,
+        "description": "Egg, Chicken and house special sauce"
+      },
+      {
+        "name": "Chef Special Beef Noodles",
+        "price": 475,
+        "description": "Egg, beef & house special sauce"
+      },
+      {
+        "name": "Hot Seafood Noodles 🌶️",
+        "price": 470,
+        "description": "Pad noodles with prawn, octopus, garlic & onion"
+      }
+    ],
+    "Ramen": [
+      {
+        "name": "Japanese Toriniku (Chicken)",
+        "price": 399,
+        "description": "Chicken, mushroom, pangash mushroom, egg, white sesame, spring onion & noodles"
+      },
+      {
+        "name": "Japanese Spicy Chicken Miso",
+        "price": 439,
+        "description": "Chicken, chicken meatball, chicken sausage, egg, pangash mushroom, white sesame & noodles"
+      },
+      {
+        "name": "Korean Seafood Spicy Ramen",
+        "price": 549,
+        "description": "Crab, prawn, squid, kimchi, egg & noodles"
+      },
+      {
+        "name": "Japanese Gyuniku Udon",
+        "price_chicken": 499,
+        "price_beef": 549,
+        "description": "Chicken/Beef, egg, spring onion, chili crush, white sesame, pangash mushroom & noodles"
+      }
+    ],
+    "Rice": [
+      {"name": "Steamed Rice", "price": 165},
+      {
+        "name": "Egg Fried Rice",
+        "price": 215,
+        "description": "Fried rice with dark sauce & egg"
+      },
+      {
+        "name": "Chicken Egg Fried Rice",
+        "price": 259,
+        "description": "Chicken fried rice with dark sauce & egg"
+      },
+      {
+        "name": "Seafood Egg Fried Rice",
+        "price": 329,
+        "description": "Fried rice with dark sauce, egg, squid & prawn"
+      },
+      {
+        "name": "Beef Egg Fried Rice",
+        "price": 339,
+        "description": "Fried rice with dark sauce, beef & egg"
+      },
+      {
+        "name": "Nami Moon Special Fried Rice 🌶️",
+        "price": 470,
+        "description": "Fried rice with naga sauce, beef, chicken, squid, prawn & red sauce"
+      },
+      {
+        "name": "Grill Chicken Rice Bowl",
+        "price": 555,
+        "description": "Fried rice with grilled chicken, tom yum sauce & egg"
+      },
+      {
+        "name": "Seafood Rice Bowl",
+        "price": 585,
+        "description": "Egg-fried rice served with oriental chili fish and prawn tempura"
+      }
+    ],
+    "Curry": [
+      {
+        "name": "Hong Kong Chicken",
+        "price": 489,
+        "description": "Chicken leg made with chili, honey & secret sauce"
+      },
+      {
+        "name": "Sriracha Chicken & Mushroom 🌶️",
+        "price": 465,
+        "description": "Chicken thigh cubes and Pangash mushrooms in sticky, sour, and house special sauce"
+      },
+      {
+        "name": "Beef Bulgogi",
+        "price": 630,
+        "description": "Korean-style beef strips with subtle, sweet heat"
+      },
+      {
+        "name": "Stir-Fried Calamari 🌶️",
+        "price": 450,
+        "description": "Calamari in spicy red pepper sauce"
+      },
+      {
+        "name": "Oriental Chili Fish",
+        "price": 465,
+        "description": "Slices of sea fish and capsicum cooked in chili oil and soy sauce"
+      },
+      {
+        "name": "Hunan Prawn",
+        "price": 555,
+        "description": "Stir-fried shrimp in thick, lustrous Hunan-style sauce"
+      },
+      {
+        "name": "Naga Prawn 🌶️",
+        "price": 555,
+        "description": "Prawn stir-fried in garlic, naga paste, and house special chili paste"
+      },
+      {
+        "name": "Seafood BBQ",
+        "price": 570,
+        "description": "Grilled crab, prawn, and octopus marinated in house special sauce"
+      },
+      {
+        "name": "Nami Moon Special Crab",
+        "price": 575,
+        "description": "Crab with spicy, house-special savory sauce"
+      },
+      {
+        "name": "Soya Glazed Ginger Chicken",
+        "price": 445,
+        "description": "Chicken thigh cubes stir-fried in soy sauce & ginger"
+      }
+    ],
+    "Desserts": [
+      {"name": "Creme Brulee", "price": 230}
+    ],
+    "Drinks": [
+      {"name": "Lemon Ice Tea", "price": 135},
+      {"name": "Blue Ocean", "price": 245},
+      {"name": "Mojito", "price": 249},
+      {"name": "Caramel Shake", "price": 295},
+      {"name": "Chocolate Shake", "price": 269},
+      {"name": "Soft Drinks", "price": "MRP"},
+      {"name": "Water", "price": "MRP"}
+    ],
+    "Nami Moon Special Drinks": [
+      {"name": "Vanilla Mint Colada", "price": 289},
+      {"name": "Green Apple Margarita", "price": 299},
+      {"name": "Orange Apple Margarita", "price": 245}
+    ]
+  }
+  
