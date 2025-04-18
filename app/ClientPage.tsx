@@ -5,6 +5,7 @@ import { useRef, useCallback, useEffect } from "react"
 import Image from "next/image"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import HeroSection from "./components/Home/Hero"
 
 export default function ClientPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -71,24 +72,7 @@ export default function ClientPage() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative h-screen overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/placeholder.svg"
-            alt="Restaurant interior"
-            fill
-            className="object-cover"
-            style={{ transform: "translateY(var(--scroll))" }}
-          />
-        </div>
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-4xl md:text-6xl font-medium text-center max-w-3xl leading-tight text-white">
-            Revolutionizing Asia with a Modern Culinary Twist
-          </h1>
-        </div>
-      </section>
+      <HeroSection></HeroSection>
 
       {/* Awards Section */}
       <section className="py-20 px-4 bg-black">

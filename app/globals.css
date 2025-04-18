@@ -13,3 +13,8 @@
   }
 }
 
+@layer components {
+  .font-googly {
+    font-family: var(--font-googly), system-ui, sans-serif;
+  }
+}
