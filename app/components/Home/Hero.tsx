@@ -8,12 +8,28 @@ const HeroSection: React.FC = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const images = [
     {
-      src: "/menu1.jpg",
+      src: "/heroimg1.jpg",
       alt: "Japanese restaurant interior"
     },
     {
-      src: "/menu2.jpg",
-      alt: "Signature dish presentation"
+      src: "/heroimg2.jpg",
+      alt: "Japanese restaurant interior"
+    },
+    {
+      src: "/heroimg3.jpg",
+      alt: "Japanese restaurant interior"
+    },
+    {
+      src: "/heroimg4.jpg",
+      alt: "Japanese restaurant interior"
+    },
+    {
+      src: "/heroimg5.jpg",
+      alt: "Japanese restaurant interior"  
+    },
+    {
+      src: "/heroimg6.jpg",
+      alt: "Japanese restaurant interior"  
     }
   ];
 
