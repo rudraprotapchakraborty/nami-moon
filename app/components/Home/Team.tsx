@@ -67,6 +67,21 @@ const MeetOurChefs: React.FC = () => {
             each dish with precision and creativity. Their dedication to sourcing the finest ingredients and
             maintaining the highest standards ensures an unforgettable dining experience every time you visit.
           </motion.p>
+          
+          <motion.div
+            variants={textVariants}
+            custom={2}
+            className="pt-4"
+          >
+            <motion.a
+              href="/menu"
+              className="inline-block px-8 py-3 bg-custom-red-600 text-white font-googly rounded-full hover:bg-custom-red-700 transition-colors duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Explore Our Menu
+            </motion.a>
+          </motion.div>
         </div>
         
         <motion.div 

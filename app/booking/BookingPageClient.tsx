@@ -5,17 +5,6 @@ import { useState, useRef } from "react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import "@/app/datepicker.css"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
 import ReCAPTCHA from "react-google-recaptcha"
 
 export default function BookingPageClient() {
@@ -37,10 +26,8 @@ export default function BookingPageClient() {
       alert("Please complete the reCAPTCHA verification")
       return
     }
-    // Handle booking submission here
     console.log({ ...formData, recaptchaValue })
     setIsModalOpen(true)
-    // Reset reCAPTCHA after submission
     recaptchaRef.current?.reset()
     setRecaptchaValue(null)
   }
@@ -67,50 +54,51 @@ export default function BookingPageClient() {
             <label htmlFor="name" className="block text-lg font-medium mb-2">
               Name
             </label>
-            <Input
+            <input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full bg-white/10 border-gray-700 text-white"
+              className="w-full px-4 py-2 bg-white/10 border border-gray-700 rounded-md text-white"
               placeholder="Enter your name"
               required
             />
           </div>
+
           <div>
             <label htmlFor="phoneNumber" className="block text-lg font-medium mb-2">
               Phone Number
             </label>
-            <Input
+            <input
               id="phoneNumber"
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleInputChange}
-              className="w-full bg-white/10 border-gray-700 text-white"
+              className="w-full px-4 py-2 bg-white/10 border border-gray-700 rounded-md text-white"
               placeholder="Enter your phone number"
               required
             />
           </div>
+
           <div>
             <label htmlFor="guests" className="block text-lg font-medium mb-2">
               Number of Guests
             </label>
-            <Select
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, guests: value }))}
+            <select
+              id="guests"
+              name="guests"
               value={formData.guests}
+              onChange={(e) => setFormData((prev) => ({ ...prev, guests: e.target.value }))}
+              className="w-full px-4 py-2 bg-white/10 border border-gray-700 rounded-md text-white"
             >
-              <SelectTrigger className="w-full text-white bg-white/10 border-gray-700">
-                <SelectValue placeholder="Select Guest" />
-              </SelectTrigger>
-              <SelectContent>
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                  <SelectItem key={num} value={num.toString()}>
-                    {num} {num === 1 ? "Guest" : "Guests"}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                <option key={num} value={num}>
+                  {num} {num === 1 ? "Guest" : "Guests"}
+                </option>
+              ))}
+            </select>
           </div>
+
           <div>
             <label htmlFor="date" className="block text-lg font-medium mb-2">
               Select Date
@@ -125,43 +113,56 @@ export default function BookingPageClient() {
               id="date"
             />
           </div>
+
           <div>
             <label htmlFor="time" className="block text-lg font-medium mb-2">
               Select Time
             </label>
-            <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, time: value }))} value={formData.time}>
-              <SelectTrigger className="w-full text-white bg-white/10 border-gray-700">
-                <SelectValue placeholder="Select a time" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10:00 AM">10:00 AM</SelectItem>
-                <SelectItem value="11:00 AM">11:00 AM</SelectItem>
-                <SelectItem value="12:00 PM">12:00 PM</SelectItem>
-                <SelectItem value="1:00 PM">1:00 PM</SelectItem>
-                <SelectItem value="2:00 PM">2:00 PM</SelectItem>
-                <SelectItem value="3:00 PM">3:00 PM</SelectItem>
-                <SelectItem value="4:00 PM">4:00 PM</SelectItem>
-                <SelectItem value="5:00 PM">5:00 PM</SelectItem>
-                <SelectItem value="6:00 PM">6:00 PM</SelectItem>
-                <SelectItem value="7:00 PM">7:00 PM</SelectItem>
-                <SelectItem value="8:00 PM">8:00 PM</SelectItem>
-                <SelectItem value="9:00 PM">9:00 PM</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              id="time"
+              name="time"
+              value={formData.time}
+              onChange={(e) => setFormData((prev) => ({ ...prev, time: e.target.value }))}
+              className="w-full px-4 py-2 bg-white/10 border border-gray-700 rounded-md text-white"
+            >
+              <option value="" disabled>
+                Select a time
+              </option>
+              {[
+                "10:00 AM",
+                "11:00 AM",
+                "12:00 PM",
+                "1:00 PM",
+                "2:00 PM",
+                "3:00 PM",
+                "4:00 PM",
+                "5:00 PM",
+                "6:00 PM",
+                "7:00 PM",
+                "8:00 PM",
+                "9:00 PM",
+              ].map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
           </div>
+
           <div>
             <label htmlFor="specialRequests" className="block text-lg font-medium mb-2">
               Special Requests (Optional)
             </label>
-            <Input
+            <input
               id="specialRequests"
               name="specialRequests"
               value={formData.specialRequests}
               onChange={handleInputChange}
-              className="w-full bg-white/10 border-gray-700 text-white"
+              className="w-full px-4 py-2 bg-white/10 border border-gray-700 rounded-md text-white"
               placeholder="Any special requests or dietary requirements?"
             />
           </div>
+
           <div className="flex justify-center">
             <ReCAPTCHA
               ref={recaptchaRef}
@@ -170,27 +171,37 @@ export default function BookingPageClient() {
               theme="dark"
             />
           </div>
+
           <div className="text-center">
-            <Button type="submit" className="bg-custom-red-600 hover:bg-custom-red-700 text-white px-8 py-3 text-lg">
+            <button
+              type="submit"
+              className="bg-custom-red-600 hover:bg-custom-red-700 text-white px-8 py-3 text-lg rounded-md"
+            >
               SUBMIT
-            </Button>
+            </button>
           </div>
         </form>
       </div>
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Thank You for Your Request</DialogTitle>
-            <DialogDescription>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <div className="bg-white text-black max-w-md w-full rounded-lg p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-2">Thank You for Your Request</h2>
+            <p className="mb-4">
               We appreciate your interest in dining with us. We will contact you soon to confirm your reservation.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={closeModal}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </p>
+            <div className="text-right">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-custom-red-600 text-white rounded hover:bg-custom-red-700"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 
 export default function BlogPage() {
   const categories = ["All", "Culinary News", "Behind the Scenes", "Chef's Special", "Events", "Reviews"]
@@ -92,9 +91,12 @@ export default function BlogPage() {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-400">January 20, 2024</span>
-                <Button variant="link" className="text-custom-red-400 hover:text-custom-red-300">
+                <Link
+                  href="/blog/year-of-excellence"
+                  className="text-custom-red-400 hover:text-custom-red-300 text-sm underline"
+                >
                   Read More →
-                </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -136,9 +138,12 @@ export default function BlogPage() {
                 <p className="text-gray-400 text-sm line-clamp-2">{post.excerpt}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">{post.date}</span>
-                  <Button variant="link" className="text-custom-red-400 hover:text-custom-red-300 p-0">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="text-custom-red-400 hover:text-custom-red-300 text-sm underline"
+                  >
                     Read More →
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </article>
@@ -147,15 +152,11 @@ export default function BlogPage() {
 
         {/* Load More Button */}
         <div className="mt-12 text-center">
-          <Button
-            variant="outline"
-            className="border-custom-red-600 text-custom-red-400 hover:bg-custom-red-600 hover:text-white"
-          >
+          <button className="px-6 py-2 rounded-md border border-custom-red-600 text-custom-red-400 hover:bg-custom-red-600 hover:text-white transition-colors">
             Load More Posts
-          </Button>
+          </button>
         </div>
       </div>
     </div>
   )
 }
-

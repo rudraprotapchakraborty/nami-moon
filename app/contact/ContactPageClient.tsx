@@ -3,15 +3,6 @@
 import type React from "react"
 import { useState, useRef } from "react"
 import ReCAPTCHA from "react-google-recaptcha"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 
 export default function ContactPageClient() {
   const [formData, setFormData] = useState({
@@ -29,24 +20,16 @@ export default function ContactPageClient() {
       alert("Please complete the reCAPTCHA")
       return
     }
-    // Handle form submission here
     console.log({ ...formData, recaptchaValue })
-    // Reset reCAPTCHA after submission
     recaptchaRef.current?.reset()
     setRecaptchaValue(null)
     setIsModalOpen(true)
+    setFormData({ name: "", phoneNumber: "", message: "" })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleRecaptchaChange = (value: string | null) => {
-    setRecaptchaValue(value)
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   return (
@@ -72,9 +55,9 @@ export default function ContactPageClient() {
           <div className="space-y-8">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-medium">NAMI MOON</h2>
-              <div className="space-y-2">
-                <p className="text-gray-300">Jigatola Bus Stand, Dhanmondi</p>
-                <p className="text-gray-300">Reservation Line: +88 01711123456</p>
+              <div className="space-y-2 text-gray-300">
+                <p>Jigatola Bus Stand, Dhanmondi</p>
+                <p>Reservation Line: +88 01711123456</p>
               </div>
               <div>
                 <h3 className="text-xl font-medium mb-2">Opening Hours</h3>
@@ -100,7 +83,7 @@ export default function ContactPageClient() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <label htmlFor="name" className="block text-sm">
-                  Name <span className="text-custom-red-500">*</span>
+                  Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -116,7 +99,7 @@ export default function ContactPageClient() {
 
               <div className="space-y-2">
                 <label htmlFor="phoneNumber" className="block text-sm">
-                  Phone Number <span className="text-custom-red-500">*</span>
+                  Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -132,7 +115,7 @@ export default function ContactPageClient() {
 
               <div className="space-y-2">
                 <label htmlFor="message" className="block text-sm">
-                  Messages <span className="text-custom-red-500">*</span>
+                  Messages <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="message"
@@ -150,14 +133,14 @@ export default function ContactPageClient() {
                 <ReCAPTCHA
                   ref={recaptchaRef}
                   sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
-                  onChange={handleRecaptchaChange}
+                  onChange={setRecaptchaValue}
                   theme="dark"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full md:w-auto px-8 py-3 bg-custom-red-600 hover:bg-custom-red-700 text-white font-medium rounded-md transition-colors cursor-pointer"
+                className="w-full md:w-auto px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors cursor-pointer"
                 disabled={!recaptchaValue}
               >
                 SEND MESSAGE
@@ -168,20 +151,22 @@ export default function ContactPageClient() {
           </div>
         </div>
       </div>
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Thank You for Contacting Us</DialogTitle>
-            <DialogDescription>
-              We appreciate your message. We will get back to you as soon as possible.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => setIsModalOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-black">
+            <h2 className="text-xl font-bold mb-2">Thank You for Contacting Us</h2>
+            <p className="mb-4">We appreciate your message. We will get back to you as soon as possible.</p>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

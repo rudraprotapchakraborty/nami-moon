@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   GiKnifeFork,
   GiSushis,
@@ -13,6 +12,7 @@ import {
 } from 'react-icons/gi';
 import { TbSoupFilled } from 'react-icons/tb';
 import { MdRamenDining } from 'react-icons/md';
+
 import { BiSolidBowlRice, BiSolidDrink } from 'react-icons/bi';
 import { RiDrinksFill } from 'react-icons/ri';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -40,8 +40,8 @@ const categoryConfig = [
   { key: 'Rice', icon: BiSolidBowlRice, label: 'Rice' },
   { key: 'Curry', icon: GiChiliPepper, label: 'Curry' },
   { key: 'Desserts', icon: GiIceCreamScoop, label: 'Desserts' },
-  { key: 'Drinks', icon: BiSolidDrink, label: 'Drinks' },
-  { key: 'Nami Moon Special Drinks', icon: RiDrinksFill, label: 'Special Drinks' },
+  { key: 'Drinks', icon: RiDrinksFill, label: 'Drinks' },
+  { key: 'Nami Moon Special Drinks', icon: BiSolidDrink, label: 'Special Drinks' },
 ];
 
 const MenuSection = () => {
@@ -50,7 +50,6 @@ const MenuSection = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
     const fetchMenu = async () => {

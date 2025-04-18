@@ -1,13 +1,11 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { notFound } from "next/navigation"
 
-// This is a mock function to simulate fetching blog post data
-// In a real application, you would fetch this data from an API or database
 function getBlogPost(slug: string) {
-  console.log(`Fetching blog post for slug: ${slug}`) // Add logging
   const blogPosts = [
     {
       slug: "year-of-excellence",
@@ -36,15 +34,11 @@ function getBlogPost(slug: string) {
       author: "Yuzu Omakase Team",
       authorImage: "/placeholder.svg?height=100&width=100",
     },
-    // Add more blog posts here...
   ]
 
-  const post = blogPosts.find((post) => post.slug === slug)
-  console.log(`Post found: ${post ? "Yes" : "No"}`) // Add logging
-  return post
+  return blogPosts.find((post) => post.slug === slug)
 }
 
-// Mock function to get related articles
 function getRelatedArticles(currentSlug: string) {
   const allArticles = [
     {
@@ -74,7 +68,6 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
   const post = getBlogPost(params.slug)
 
   if (!post) {
-    console.log(`Post not found for slug: ${params.slug}`) // Add logging
     notFound()
   }
 
@@ -105,7 +98,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </div>
 
-        {/* Related Articles Section */}
+        {/* Related Articles */}
         <div className="border-t border-gray-800 pt-16">
           <h2 className="text-3xl font-medium mb-8">Related Articles</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -134,10 +127,13 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
           <p className="text-gray-300 mb-6">
             Ready to embark on your own culinary journey? Book your omakase experience today.
           </p>
-          <Button className="bg-custom-red-600 hover:bg-custom-red-700 text-white">Book Now</Button>
+          <Link href="/booking">
+            <button className="bg-custom-red-600 hover:bg-custom-red-700 text-white text-base px-6 py-2 rounded-full transition-colors duration-300 font-medium">
+              Book Now
+            </button>
+          </Link>
         </div>
       </div>
     </div>
   )
 }
-

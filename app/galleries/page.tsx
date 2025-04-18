@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export default function GalleriesPage() {
@@ -19,76 +17,83 @@ export default function GalleriesPage() {
   ]
 
   const handlePrevious = () => {
-    setSelectedImageIndex((prevIndex) =>
-      prevIndex !== null ? (prevIndex - 1 + galleryItems.length) % galleryItems.length : null,
-    )
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((selectedImageIndex - 1 + galleryItems.length) % galleryItems.length)
+    }
   }
 
   const handleNext = () => {
-    setSelectedImageIndex((prevIndex) => (prevIndex !== null ? (prevIndex + 1) % galleryItems.length : null))
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((selectedImageIndex + 1) % galleryItems.length)
+    }
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-5xl md:text-6xl font-medium mb-12 text-center">OUR GALLERIES</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {galleryItems.map((item, index) => (
-          <Dialog
-            key={item.id}
-            open={selectedImageIndex === index}
-            onOpenChange={(open) => !open && setSelectedImageIndex(null)}
-          >
-            <DialogTrigger asChild>
-              <div
-                className="group relative overflow-hidden rounded-lg cursor-pointer"
-                onClick={() => setSelectedImageIndex(index)}
-              >
-                <Image
-                  src={item.src || "/placeholder.svg"}
-                  alt={item.title}
-                  width={400}
-                  height={300}
-                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <h3 className="text-white text-xl font-semibold">{item.title}</h3>
-                </div>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <h1 className="text-5xl md:text-6xl font-medium mb-12 text-center">OUR GALLERIES</h1>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {galleryItems.map((item, index) => (
+            <div
+              key={item.id}
+              className="group relative overflow-hidden rounded-lg border border-white/10 cursor-pointer"
+              onClick={() => setSelectedImageIndex(index)}
+            >
+              <Image
+                src={item.src}
+                alt={item.title}
+                width={400}
+                height={300}
+                className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 className="text-white text-xl font-semibold">{item.title}</h3>
               </div>
-            </DialogTrigger>
-            <DialogContent className="max-w-3xl">
-              {selectedImageIndex !== null && (
-                <>
-                  <div className="relative">
-                    <Image
-                      src={galleryItems[selectedImageIndex].src || "/placeholder.svg"}
-                      alt={galleryItems[selectedImageIndex].title}
-                      width={800}
-                      height={600}
-                      className="w-full h-auto object-contain"
-                    />
-                    <Button
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2"
-                      onClick={handlePrevious}
-                      variant="ghost"
-                    >
-                      <ChevronLeft className="h-6 w-6" />
-                    </Button>
-                    <Button
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                      onClick={handleNext}
-                      variant="ghost"
-                    >
-                      <ChevronRight className="h-6 w-6" />
-                    </Button>
-                  </div>
-                  <h3 className="text-xl font-semibold mt-4">{galleryItems[selectedImageIndex].title}</h3>
-                </>
-              )}
-            </DialogContent>
-          </Dialog>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Modal */}
+      {selectedImageIndex !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="relative max-w-3xl w-full px-4">
+            <Image
+              src={galleryItems[selectedImageIndex].src}
+              alt={galleryItems[selectedImageIndex].title}
+              width={800}
+              height={600}
+              className="w-full h-auto object-contain rounded"
+            />
+
+            <button
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 p-2 rounded-full hover:bg-white/20"
+              onClick={handlePrevious}
+            >
+              <ChevronLeft className="h-6 w-6 text-white" />
+            </button>
+            <button
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 p-2 rounded-full hover:bg-white/20"
+              onClick={handleNext}
+            >
+              <ChevronRight className="h-6 w-6 text-white" />
+            </button>
+
+            <h3 className="text-center text-xl font-semibold text-white mt-4">
+              {galleryItems[selectedImageIndex].title}
+            </h3>
+
+            <button
+              onClick={() => setSelectedImageIndex(null)}
+              className="absolute top-4 right-4 text-white text-xl font-bold"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-
