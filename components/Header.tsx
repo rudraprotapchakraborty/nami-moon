@@ -23,7 +23,6 @@ export function Header() {
   const menuItems = [
     { name: "HOME", href: "/" },
     { name: "MENU", href: "/menu" },
-    { name: "BLOG", href: "/blog" },
     { name: "GALLERIES", href: "/galleries" },
     { name: "ABOUT US", href: "/about" },
     { name: "CONTACT US", href: "/contact" },
