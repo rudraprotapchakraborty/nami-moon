@@ -131,7 +131,7 @@ const MenuSection = () => {
                   <div className="group relative overflow-hidden rounded-lg cursor-pointer h-72 shadow-xl bg-black/40">
                     <div className="relative h-full w-full">
                       <Image
-                        src="/placeholder.svg?height=300&width=400"
+                        src="/logo.png"
                         alt={item.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"

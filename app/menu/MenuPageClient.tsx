@@ -304,7 +304,7 @@ export default function MenuPageClient() {
                         transition={{ duration: 0.5 }}
                       >
                         <Image
-                          src={item.image ? item.image : "/about.jpg"}
+                          src={item.image ? item.image : "/logo.png"}
                           alt={item.name}
                           fill
                           className="object-cover"
