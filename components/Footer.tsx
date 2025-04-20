@@ -1,7 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Clock, ChevronRight } from "lucide-react"
+import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Clock, ChevronRight, Subscript } from "lucide-react"
 import { motion } from "framer-motion"
+import NewsletterSubscription from "./SubscriptionForm"
 
 export function Footer() {
   const quickLinks = [
@@ -204,23 +205,7 @@ export function Footer() {
               </li>
             </ul>
             
-            <div className="pt-4">
-              <h4 className="text-white text-sm font-medium mb-3">Subscribe to our newsletter</h4>
-              <div className="flex">
-                <input 
-                  type="email" 
-                  placeholder="Your email" 
-                  className="bg-gray-800 text-gray-300 px-4 py-2 text-sm rounded-l-full focus:outline-none focus:ring-1 focus:ring-custom-red-500 w-full"
-                />
-                <motion.button
-                  className="bg-custom-red-600 text-white px-4 py-2 rounded-r-full hover:bg-custom-red-700 transition-colors duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </motion.button>
-              </div>
-            </div>
+            <NewsletterSubscription />
           </motion.div>
         </div>
         
