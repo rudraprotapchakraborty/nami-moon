@@ -34,13 +34,13 @@ const categoryIcons: Record<string, JSX.Element> = {
   Appetizers: <GiKnifeFork className="text-lg" />,
   Sushi: <GiSushis className="text-lg" />,
   Noodles: <GiNoodles className="text-lg" />,
-  "Nami Moon Special Drinks": <RiDrinksFill className="text-lg" />,
+  "Nami Moon Special Drinks": <BiSolidDrink className="text-lg" />,
   Soup: <TbSoupFilled className="text-lg" />,
   Ramen: <MdRamenDining className="text-lg" />,
   Rice: <BiSolidBowlRice className="text-lg" />,
   Curry: <GiChiliPepper className="text-lg" />,
   Desserts: <GiIceCreamScoop className="text-lg" />,
-  Drinks: <BiSolidDrink className="text-lg" />,
+  Drinks: <RiDrinksFill className="text-lg" />,
 };
 
 export default function MenuPageClient() {
@@ -131,21 +131,24 @@ export default function MenuPageClient() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white px-4 py-16 relative overflow-hidden"
+      className="relative min-h-screen text-white bg-black overflow-hidden"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
       ref={sectionRef}
     >
-      {/* Background gradient effect */}
+      {/* Animated red gate background */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.8 }}
-        transition={{ duration: 1.5 }}
-      />
+        className="absolute inset-0 z-0"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <div className="w-full h-[50vh] bg-custom-red-600 rounded-b-[100%] shadow-2xl" />
+      </motion.div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="relative z-10 px-4 py-16 max-w-7xl mx-auto">
+        {/* Heading */}
         <motion.h1
           className="text-5xl md:text-6xl font-medium text-center mb-6 text-black font-googly"
           variants={itemVariants}
@@ -181,14 +184,6 @@ export default function MenuPageClient() {
               >
                 {categoryIcons[tab] || <GiKnifeFork className="text-lg" />}
                 <span>{tab}</span>
-                {selectedTab === tab && (
-                  <motion.div
-                    className="absolute inset-0 bg-custom-red-500 rounded-full -z-10"
-                    layoutId="activeTab"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
               </motion.button>
             ))}
           </AnimatePresence>
@@ -210,46 +205,25 @@ export default function MenuPageClient() {
             />
           </div>
           <div className="flex gap-2">
-            <motion.button
-              onClick={() => setSortOrder("asc")}
-              className={`px-4 py-2 rounded-full font-googly transition-all ${
-                sortOrder === "asc"
-                  ? "bg-custom-red-700 text-white"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Price ↑
-            </motion.button>
-            <motion.button
-              onClick={() => setSortOrder("desc")}
-              className={`px-4 py-2 rounded-full font-googly transition-all ${
-                sortOrder === "desc"
-                  ? "bg-custom-red-700 text-white"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Price ↓
-            </motion.button>
-            <motion.button
-              onClick={() => setSortOrder("none")}
-              className={`px-4 py-2 rounded-full font-googly transition-all ${
-                sortOrder === "none"
-                  ? "bg-custom-red-700 text-white"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Reset
-            </motion.button>
+            {["asc", "desc", "none"].map((order) => (
+              <motion.button
+                key={order}
+                onClick={() => setSortOrder(order as any)}
+                className={`px-4 py-2 rounded-full font-googly transition-all ${
+                  sortOrder === order
+                    ? "bg-custom-red-700 text-white"
+                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {order === "asc" ? "Price ↑" : order === "desc" ? "Price ↓" : "Reset"}
+              </motion.button>
+            ))}
           </div>
         </motion.div>
 
-        {/* Loading State */}
+        {/* Loading / No results / Menu grid */}
         {isLoading ? (
           <motion.div
             className="flex justify-center items-center py-20"
@@ -259,92 +233,75 @@ export default function MenuPageClient() {
           >
             <div className="w-16 h-16 border-t-4 border-custom-red-500 border-solid rounded-full animate-spin"></div>
           </motion.div>
+        ) : sortedItems.length === 0 ? (
+          <motion.div
+            className="text-center py-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-xl text-gray-400 font-googly">
+              No menu items found. Try a different search term.
+            </p>
+          </motion.div>
         ) : (
-          <>
-            {/* No Results */}
-            {sortedItems.length === 0 && (
-              <motion.div
-                className="text-center py-16"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-xl text-gray-400 font-googly">
-                  No menu items found. Try a different search term.
-                </p>
-              </motion.div>
-            )}
-
-            {/* Menu Items */}
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-            >
-              <AnimatePresence>
-                {sortedItems.map((item, index) => (
-                  <motion.div
-                    key={`${item.name}-${index}`}
-                    className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-xl border border-gray-700/50"
-                    variants={cardVariants}
-                    custom={index}
-                    whileHover={{
-                      y: -5,
-                      boxShadow:
-                        "0 20px 25px -5px rgba(255, 59, 59, 0.2), 0 10px 10px -5px rgba(255, 59, 59, 0.1)",
-                    }}
-                    transition={{ duration: 0.3 }}
-                    layout
-                  >
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <motion.div
-                        initial={{ scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <Image
-                          src={item.image ? item.image : "/logo.png"}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </motion.div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            <AnimatePresence>
+              {sortedItems.map((item, index) => (
+                <motion.div
+                  key={`${item.name}-${index}`}
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-xl border border-gray-700/50"
+                  variants={cardVariants}
+                  custom={index}
+                  whileHover={{
+                    y: -5,
+                    boxShadow:
+                      "0 20px 25px -5px rgba(255, 59, 59, 0.2), 0 10px 10px -5px rgba(255, 59, 59, 0.1)",
+                  }}
+                  transition={{ duration: 0.3 }}
+                  layout
+                >
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <motion.div
+                      initial={{ scale: 1 }}
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Image
+                        src={item.image || "/logo.png"}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </motion.div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <h3 className="text-lg font-semibold font-googly">{item.name}</h3>
+                    {item.description && (
+                      <p className="text-sm text-gray-300 font-googly">{item.description}</p>
+                    )}
+                    <div className="flex justify-between items-center">
+                      <p className="text-custom-red-400 font-bold font-googly">
+                        ৳{" "}
+                        {item.price ??
+                          item.price_5pcs ??
+                          item.price_10pcs ??
+                          item.price_chicken ??
+                          item.price_beef ??
+                          "MRP"}
+                      </p>
                     </div>
-                    <div className="p-5 space-y-3">
-                      <h3 className="text-lg font-semibold font-googly">
-                        {item.name}
-                      </h3>
-                      {item.description && (
-                        <p className="text-sm text-gray-300 font-googly">
-                          {item.description}
-                        </p>
-                      )}
-                      <div className="flex justify-between items-center">
-                        <p className="text-custom-red-400 font-bold font-googly">
-                          ৳{" "}
-                          {item.price ??
-                            item.price_5pcs ??
-                            item.price_10pcs ??
-                            item.price_chicken ??
-                            item.price_beef ??
-                            "MRP"}
-                        </p>
-                        <motion.button
-                          className="px-3 py-1 bg-custom-red-600 text-white text-sm rounded-full font-googly opacity-0 group-hover:opacity-100 transition-opacity"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Order
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          </>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
       </div>
     </motion.div>
