@@ -1,4 +1,3 @@
-// app/api/send-email/route.ts
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
@@ -21,10 +20,10 @@ export async function POST(req: Request) {
       },
     });
 
-    const mailOptions = {
-      from: `"${name}" <${process.env.ZOHO_EMAIL!}>`, // ✅ must be your verified Zoho email
-      to: "contact@siriusamarketing.com",              // ✅ recipient (you)
-      replyTo: email,                                  // ✅ user’s real email for replies
+    await transporter.sendMail({
+      from: `"${name}" <${process.env.ZOHO_EMAIL!}>`,
+      to: "contact@siriusamarketing.com",
+      replyTo: email,
       subject: subject || "New Contact Form Submission",
       html: `
         <p><strong>Name:</strong> ${name}</p>
@@ -33,13 +32,12 @@ export async function POST(req: Request) {
         <p><strong>Message:</strong></p>
         <p>${message}</p>
       `,
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     return NextResponse.json({ success: "Email sent successfully!" }, { status: 200 });
-  } catch (error: any) {
-    console.error("Error sending email:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error sending email:", message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

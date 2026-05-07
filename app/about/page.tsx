@@ -20,15 +20,15 @@ export default function AboutPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100])
   
   const gridImages = [
-    { src: "/galleries/item1.jpg", alt: "Ramen dishes" },
-    { src: "/galleries/item2.jpg", alt: "Fresh sashimi selection" },
-    { src: "/galleries/item3.jpg", alt: "Yuzu honey drink" },
-    { src: "/galleries/item4.jpg", alt: "Premium sushi" },
-    { src: "/galleries/item5.jpg", alt: "Yuzu Group logo" },
-    { src: "/galleries/item6.jpg", alt: "Premium wagyu beef" },
-    { src: "/galleries/item7.jpg", alt: "Shabu set" },
-    { src: "/galleries/item8.jpg", alt: "Yuzu beverages" },
-    { src: "/galleries/item9.jpg", alt: "Sashimi platter" },
+    { src: "/galleries/item1.jpg", alt: "Blue Lagoon Mocktail" },
+    { src: "/galleries/item2.jpg", alt: "Iced Coffee Trio" },
+    { src: "/galleries/item3.jpg", alt: "Creamy Milkshakes" },
+    { src: "/galleries/item4.jpg", alt: "Seafood Fried Rice" },
+    { src: "/galleries/item5.jpg", alt: "Beef Bulgogi Bowl" },
+    { src: "/galleries/item6.jpg", alt: "Classic Veg Fried Rice" },
+    { src: "/galleries/item7.jpg", alt: "Spicy Egg Rice Bowl" },
+    { src: "/galleries/item8.jpg", alt: "Chicken Fried Rice" },
+    { src: "/galleries/item9.jpg", alt: "Sashimi Platter" },
   ]
 
   const containerVariants = {
@@ -244,26 +244,26 @@ export default function AboutPage() {
           {gridImages.map((image, index) => (
             <motion.div 
               key={index} 
-              className="relative aspect-square rounded-xl overflow-hidden shadow-lg border border-gray-800"
+              className="relative aspect-square rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-red-700/50 transition-colors duration-300"
               variants={gridItemVariants}
               custom={index}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.03,
                 boxShadow: "0 20px 25px -5px rgba(255, 59, 59, 0.2), 0 10px 10px -5px rgba(255, 59, 59, 0.1)",
-                borderColor: "rgba(220, 38, 38, 0.5)"
               }}
               transition={{ duration: 0.3 }}
             >
               <motion.div
+                className="relative h-full w-full"
                 initial={{ scale: 1 }}
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.6 }}
               >
-                <Image 
-                  src={image.src || "/placeholder.svg"} 
-                  alt={image.alt} 
-                  fill 
-                  className="object-cover" 
+                <Image
+                  src={image.src || "/placeholder.svg"}
+                  alt={image.alt}
+                  fill
+                  className="object-cover"
                 />
               </motion.div>
               <motion.div 

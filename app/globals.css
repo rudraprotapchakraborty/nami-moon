@@ -1,20 +1,58 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/* Dark mode via class strategy */
+@variant dark (&:where(.dark, .dark *));
+
+/* Inline theme: utilities reference these CSS variables at runtime */
+@theme inline {
+  --font-googly: var(--font-googly), system-ui, sans-serif;
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* Static theme values */
+@theme {
+  --color-custom-red-100: #ffcccb;
+  --color-custom-red-200: #ff9999;
+  --color-custom-red-300: #ff6666;
+  --color-custom-red-400: #ff3333;
+  --color-custom-red-500: #ff0000;
+  --color-custom-red-600: #cc0000;
+  --color-custom-red-700: #990000;
+  --color-custom-red-800: #660000;
+  --color-custom-red-900: #330000;
+}
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-
   .no-scrollbar {
-    -ms-overflow-x: hidden;
+    -ms-overflow-style: none;
     scrollbar-width: none;
-  }
-}
-
-@layer components {
-  .font-googly {
-    font-family: var(--font-googly), system-ui, sans-serif;
   }
 }

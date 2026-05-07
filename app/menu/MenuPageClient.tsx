@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
@@ -29,7 +29,7 @@ type MenuItem = {
 
 type MenuData = Record<string, MenuItem[]>;
 
-const categoryIcons: Record<string, JSX.Element> = {
+const categoryIcons: Record<string, React.ReactElement> = {
   All: <GiKnifeFork className="text-lg" />,
   Appetizers: <GiKnifeFork className="text-lg" />,
   Sushi: <GiSushis className="text-lg" />,
@@ -168,7 +168,7 @@ export default function MenuPageClient() {
           className="flex flex-wrap gap-3 mb-10 justify-center"
           variants={itemVariants}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {tabs.map((tab) => (
               <motion.button
                 key={tab}
@@ -208,7 +208,7 @@ export default function MenuPageClient() {
             {["asc", "desc", "none"].map((order) => (
               <motion.button
                 key={order}
-                onClick={() => setSortOrder(order as any)}
+                onClick={() => setSortOrder(order as "asc" | "desc" | "none")}
                 className={`px-4 py-2 rounded-full font-googly transition-all ${
                   sortOrder === order
                     ? "bg-custom-red-700 text-white"
@@ -268,6 +268,7 @@ export default function MenuPageClient() {
                 >
                   <div className="relative h-48 w-full overflow-hidden">
                     <motion.div
+                      className="relative h-full w-full"
                       initial={{ scale: 1 }}
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.5 }}

@@ -69,8 +69,6 @@ export default function BookingPageClient() {
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY_2!
       );
 
-      console.log("EmailJS result:", result);
-
       if (result.status !== 200) {
         throw new Error("Failed to send email");
       }

@@ -121,7 +121,7 @@ const MenuSection = () => {
 
         {/* Carousel */}
         <div className="relative">
-          <div className="overflow-hidden" ref={emblaRef}>
+          <div className="relative overflow-hidden" ref={emblaRef}>
             <div className="flex gap-6">
               {currentItems.map((item, index) => (
                 <div

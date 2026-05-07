@@ -94,28 +94,33 @@ const AboutSection: React.FC = () => {
       
       {/* Animated particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-custom-red-500 rounded-full opacity-30"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, Math.random() * -100],
-              opacity: [0.3, 0],
-              scale: [1, Math.random() * 3 + 1],
-            }}
-            transition={{
-              duration: Math.random() * 5 + 5,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
+        {[...Array(20)].map((_, i) => {
+          const leftPos = ((i * 7919) % 100).toFixed(2);
+          const topPos = ((i * 104729) % 100).toFixed(2);
+          const yDistance = (((i * 307) % 100) + 50).toFixed(0);
+          const scale = (((i * 41) % 3) + 2).toFixed(1);
+          const duration = (((i * 101) % 5) + 5).toFixed(1);
+          const delay = ((i * 211) % 5).toFixed(1);
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-custom-red-500 rounded-full opacity-30"
+              style={{ left: `${leftPos}%`, top: `${topPos}%` }}
+              animate={{
+                y: [0, -parseInt(yDistance)],
+                opacity: [0.3, 0],
+                scale: [1, parseFloat(scale)],
+              }}
+              transition={{
+                duration: parseFloat(duration),
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "easeInOut",
+                delay: parseFloat(delay),
+              }}
+            />
+          );
+        })}
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -126,7 +131,7 @@ const AboutSection: React.FC = () => {
             ref={imageRef}
           >
             <motion.div
-              className="h-full w-full"
+              className="relative h-full w-full"
               style={{ y: imageY }}
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 1.2 }}

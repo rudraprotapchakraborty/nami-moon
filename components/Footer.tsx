@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image"
 import Link from "next/link"
-import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Clock, ChevronRight, Subscript } from "lucide-react"
+import dynamic from "next/dynamic"
+import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Clock, ChevronRight } from "lucide-react"
 import { motion } from "framer-motion"
-import NewsletterSubscription from "./SubscriptionForm"
+
+const NewsletterSubscription = dynamic(() => import("./SubscriptionForm"), { ssr: false })
 
 export function Footer() {
   const quickLinks = [
@@ -172,14 +176,16 @@ export function Footer() {
               </li>
             </ul>
             
-            <motion.button
-              className="mt-4 px-5 py-2 bg-custom-red-600 text-white text-sm rounded-full font-medium hover:bg-custom-red-700 transition-colors duration-300 flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Phone className="h-4 w-4" />
-              Reserve a Table
-            </motion.button>
+            <Link href="/booking">
+              <motion.button
+                className="mt-4 px-5 py-2 bg-custom-red-600 text-white text-sm rounded-full font-medium hover:bg-custom-red-700 transition-colors duration-300 flex items-center gap-2"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Phone className="h-4 w-4" />
+                Reserve a Table
+              </motion.button>
+            </Link>
           </motion.div>
           
           {/* Column 4: Contact */}

@@ -99,7 +99,7 @@ const MeetOurChefs: React.FC = () => {
             initial={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 1.5 }}
-            className="h-full w-full"
+            className="relative h-full w-full"
           >
             <Image
               src="/team.jpg"

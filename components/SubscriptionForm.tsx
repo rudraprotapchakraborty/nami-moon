@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import emailjs from '@emailjs/browser';
-import { db, addDoc, collection } from '@/lib/firebaseConfig';
 
 const NewsletterSubscription: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,37 +12,27 @@ const NewsletterSubscription: React.FC = () => {
 
   const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!email) {
-      setMessage('Please enter a valid email address.');
-      return;
-    }
-
     setLoading(true);
     try {
-      // Save email to Firebase
-      await addDoc(collection(db, 'subscribers'), { email });
-
-      // Send confirmation via EmailJS
       const response = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        { email: email },
+        { email },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
       );
 
       if (response.status === 200) {
-        setMessage('Subscription successful! 🎉');
+        setMessage('Subscription successful!');
         setEmail('');
       } else {
         setMessage('Failed to subscribe. Please try again.');
       }
     } catch (error) {
-      console.error('Subscription Error:', error);
+      console.error('Subscription error:', error);
       setMessage('Error occurred. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -73,9 +62,7 @@ const NewsletterSubscription: React.FC = () => {
           )}
         </motion.button>
       </form>
-      {message && (
-        <p className="text-sm text-gray-400 mt-2">{message}</p>
-      )}
+      {message && <p className="text-sm text-gray-400 mt-2">{message}</p>}
     </div>
   );
 };
