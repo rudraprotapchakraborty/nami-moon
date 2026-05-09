@@ -1,56 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { MapPin, Phone, Clock, Send, X } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Client-only component for particles
-function ParticlesBackground() {
-  const [isMounted, setIsMounted] = useState(false);
-  
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  
-  if (!isMounted) return null;
-  
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      {[...Array(15)].map((_, i) => {
-        // Generate deterministic values based on index
-        const leftPos = ((i * 7919) % 100).toFixed(2);
-        const topPos = ((i * 104729) % 100).toFixed(2);
-        const duration = (((i * 101) % 5) + 5).toFixed(1);
-        const delay = ((i * 211) % 5).toFixed(1);
-        const yDistance = (((i * 307) % 100) + 50).toFixed(0);
-        const scaleMax = (((i * 41) % 3) + 2).toFixed(1);
-        
-        return (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-custom-red-500 rounded-full opacity-30"
-            style={{
-              left: `${leftPos}%`,
-              top: `${topPos}%`,
-            }}
-            animate={{
-              y: [0, -parseInt(yDistance)],
-              opacity: [0.3, 0],
-              scale: [1, parseFloat(scaleMax)],
-            }}
-            transition={{
-              duration: parseFloat(duration),
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-              delay: parseFloat(delay),
-            }}
-          />
-        );
-      })}
-    </div>
-  );
-}
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function ContactPageClient() {
   const [formData, setFormData] = useState({
@@ -60,22 +13,19 @@ export default function ContactPageClient() {
     subject: "",
     message: "",
   });
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError("");
 
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
@@ -86,250 +36,139 @@ export default function ContactPageClient() {
       });
 
       const data = await response.json();
-
-      if (!response.ok)
-        throw new Error(data.error || "Failed to send message.");
+      if (!response.ok) throw new Error(data.error || "Failed to send message.");
 
       setIsModalOpen(true);
-      setFormData({
-        name: "",
-        email: "",
-        phoneNumber: "",
-        subject: "",
-        message: "",
-      });
-    } catch (error) {
-      console.error("Form submission error:", error);
-      alert("Failed to send your message. Please try again later.");
+      setFormData({ name: "", email: "", phoneNumber: "", subject: "", message: "" });
+    } catch (err) {
+      console.error("Form submission error:", err);
+      setError(err instanceof Error ? err.message : "Failed to send your message.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-    },
-  };
-
-  const formItemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    }),
-  };
-
   return (
-    <motion.div
-      className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-    >
-      {/* Background gradient effect */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.8 }}
-        transition={{ duration: 1.5 }}
-      />
+    <div className="bg-ink min-h-screen text-ivory">
+      {/* Header */}
+      <section className="relative pt-36 md:pt-44 pb-20 noise border-b border-hairline">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-7">
+              <div className="flex items-center gap-4 mb-8">
+                <span className="eyebrow">N° 07 · Get in Touch</span>
+                <span className="block h-px w-16 bg-gold/50" />
+              </div>
+              <h1 className="display-xl text-ivory text-balance">
+                Write to us, or{" "}
+                <span className="italic font-light text-gold">visit</span>{" "}
+                in person.
+              </h1>
+            </div>
+            <div className="lg:col-span-4 lg:col-start-9 self-end">
+              <p className="text-ivory-muted text-base leading-relaxed">
+                For private dining, press, or general enquiry. We respond
+                within one business day.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Animated particles */}
-      <ParticlesBackground />
+      {/* Body */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+            {/* Info + map */}
+            <div className="lg:col-span-5 space-y-12">
+              <div className="space-y-10">
+                <Detail
+                  label="Address"
+                  value={
+                    <>
+                      Keari Crescent Tower<br />
+                      Jigatola Bus Stand, Dhanmondi<br />
+                      Dhaka, Bangladesh
+                    </>
+                  }
+                />
+                <Detail label="Reservations" value={<>+880 1328-226610</>} />
+                <Detail label="Email" value={<>namimoon8@gmail.com</>} />
+              </div>
 
-      <div
-        className="max-w-7xl mx-auto px-4 py-16 relative z-10"
-        ref={sectionRef}
-      >
-        <motion.div
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          variants={containerVariants}
-        >
-          <motion.h1
-            className="text-5xl md:text-6xl font-medium mb-4 text-center text-custom-red-500 font-googly"
-            variants={itemVariants}
-          >
-            CONTACT US
-          </motion.h1>
+              <div className="border-t border-hairline pt-10">
+                <span className="eyebrow mb-5 block">Hours</span>
+                <table className="w-full text-sm">
+                  <tbody className="divide-y divide-hairline">
+                    {[
+                      ["Mon — Thu", "11:30 — 22:00"],
+                      ["Fri — Sat", "11:30 — 23:00"],
+                      ["Sunday",    "12:00 — 21:00"],
+                    ].map(([d, h]) => (
+                      <tr key={d}>
+                        <td className="py-3 text-ivory">{d}</td>
+                        <td className="py-3 text-ivory-muted text-right">{h}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-          <motion.div
-            className="h-1 w-24 bg-custom-red-500 mx-auto rounded-full mb-16"
-            initial={{ width: 0 }}
-            animate={{ width: 96 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-          />
-
-          <div className="grid md:grid-cols-2 gap-12">
-            
-            {/* Contact Information Section */}
-            <motion.div className="space-y-8" variants={containerVariants}>
-              {/* Address Section */}
-              <motion.div
-                className="space-y-6 bg-gray-800/30 p-6 rounded-xl backdrop-blur-sm border border-gray-700/50"
-                variants={itemVariants}
-              >
-                <motion.h2
-                  className="text-3xl md:text-4xl font-medium text-custom-red-500 font-googly"
-                  variants={itemVariants}
-                >
-                  NAMI MOON
-                </motion.h2>
-
-                <motion.div
-                  className="space-y-4 text-gray-300"
-                  variants={itemVariants}
-                >
-                  <motion.div
-                    className="flex items-center gap-3"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <MapPin className="text-custom-red-500" />
-                    <p>Jigatola Bus Stand, Dhanmondi</p>
-                  </motion.div>
-
-                  <motion.div
-                    className="flex items-center gap-3"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Phone className="text-custom-red-500" />
-                    <p>Reservation Line: +88 01711123456</p>
-                  </motion.div>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <h3 className="text-xl font-medium mb-4 flex items-center gap-2 font-googly">
-                    <Clock className="text-custom-red-500" />
-                    Opening Hours
-                  </h3>
-
-                  <table className="w-full text-gray-300">
-                    <tbody>
-                      <motion.tr
-                        whileHover={{
-                          backgroundColor: "rgba(255,255,255,0.05)",
-                        }}
-                        className="rounded-md"
-                      >
-                        <td className="pr-4 py-2">Monday - Friday</td>
-                        <td>11:00 AM - 10:00 PM</td>
-                      </motion.tr>
-                      <motion.tr
-                        whileHover={{
-                          backgroundColor: "rgba(255,255,255,0.05)",
-                        }}
-                        className="rounded-md"
-                      >
-                        <td className="pr-4 py-2">Saturday - Sunday</td>
-                        <td>12:00 PM - 11:00 PM</td>
-                      </motion.tr>
-                      <motion.tr
-                        whileHover={{
-                          backgroundColor: "rgba(255,255,255,0.05)",
-                        }}
-                        className="rounded-md"
-                      >
-                        <td className="pr-4 py-2">Holidays</td>
-                        <td>12:00 PM - 10:00 PM</td>
-                      </motion.tr>
-                    </tbody>
-                  </table>
-                </motion.div>
-              </motion.div>
-
-              {/* Google map section */}
-              <motion.div
-                className="relative h-[335px] rounded-xl overflow-hidden shadow-2xl border border-gray-800"
-                variants={itemVariants}
-              >
+              {/* Map */}
+              <div className="relative h-[340px] border border-hairline-strong overflow-hidden">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d541.5337015719812!2d90.37554214178249!3d23.739116244827688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b90046839a49%3A0x96501ba8e0d99430!2sNami%20Moon%20Dhanmondi!5e1!3m2!1sen!2sbd!4v1739715703753!5m2!1sen!2sbd"
                   width="100%"
                   height="100%"
-                  style={{ border: 0 }}
+                  style={{ border: 0, filter: "grayscale(0.6) contrast(1.1) brightness(0.8)" }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+                />
+                <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-gold/20" />
+              </div>
+            </div>
 
-                {/* Decorative elements */}
-                <motion.div
-                  className="absolute -bottom-2 -left-2 w-24 h-24 border-l-2 border-b-2 border-custom-red-500"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 1, duration: 0.8 }}
-                />
-                <motion.div
-                  className="absolute -top-2 -right-2 w-24 h-24 border-r-2 border-t-2 border-custom-red-500"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 1, duration: 0.8 }}
-                />
-              </motion.div>
-            </motion.div>
-            {/* Contact Form Section */}
+            {/* Form */}
             <motion.form
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease }}
               onSubmit={handleSubmit}
-              className="space-y-6 bg-gray-800/30 p-6 rounded-xl backdrop-blur-sm border border-gray-700/50"
-              variants={containerVariants}
+              className="lg:col-span-7 space-y-8"
             >
-              <motion.div
-                className="space-y-2"
-                variants={formItemVariants}
-                custom={0}
-              >
-                <label htmlFor="name" className="block text-sm font-googly">
-                  Name <span className="text-custom-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-custom-red-500 focus:outline-none focus:ring-1 focus:ring-custom-red-500 transition-all duration-300 font-googly"
-                  placeholder="Enter your full name"
-                />
-              </motion.div>
+              <div className="grid md:grid-cols-2 gap-8">
+                <Field label="Name" htmlFor="name" index="01">
+                  <input
+                    id="name"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Your full name"
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Phone" htmlFor="phoneNumber" index="02">
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    required
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="+880 …"
+                    className={inputCls}
+                  />
+                </Field>
+              </div>
 
-              <motion.div
-                className="space-y-2"
-                variants={formItemVariants}
-                custom={1.5}
-              >
-                <label htmlFor="email" className="block text-sm font-googly">
-                  Email <span className="text-custom-red-500">*</span>
-                </label>
+              <Field label="Email" htmlFor="email" index="03">
                 <input
                   type="email"
                   id="email"
@@ -337,42 +176,12 @@ export default function ContactPageClient() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-custom-red-500 focus:outline-none focus:ring-1 focus:ring-custom-red-500 transition-all duration-300 font-googly"
-                  placeholder="Enter your email address"
+                  placeholder="you@email.com"
+                  className={inputCls}
                 />
-              </motion.div>
+              </Field>
 
-              <motion.div
-                className="space-y-2"
-                variants={formItemVariants}
-                custom={1}
-              >
-                <label
-                  htmlFor="phoneNumber"
-                  className="block text-sm font-googly"
-                >
-                  Phone Number <span className="text-custom-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  required
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-custom-red-500 focus:outline-none focus:ring-1 focus:ring-custom-red-500 transition-all duration-300 font-googly"
-                  placeholder="Enter your phone number"
-                />
-              </motion.div>
-
-              <motion.div
-                className="space-y-2"
-                variants={formItemVariants}
-                custom={2}
-              >
-                <label htmlFor="subject" className="block text-sm font-googly">
-                  Subject <span className="text-custom-red-500">*</span>
-                </label>
+              <Field label="Subject" htmlFor="subject" index="04">
                 <input
                   type="text"
                   id="subject"
@@ -380,133 +189,120 @@ export default function ContactPageClient() {
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-custom-red-500 focus:outline-none focus:ring-1 focus:ring-custom-red-500 transition-all duration-300 font-googly"
-                  placeholder="Enter the subject"
+                  placeholder="What's it regarding?"
+                  className={inputCls}
                 />
-              </motion.div>
+              </Field>
 
-              <motion.div
-                className="space-y-2"
-                variants={formItemVariants}
-                custom={2}
-              >
-                <label htmlFor="message" className="block text-sm font-googly">
-                  Messages <span className="text-custom-red-500">*</span>
-                </label>
+              <Field label="Message" htmlFor="message" index="05">
                 <textarea
                   id="message"
                   name="message"
+                  rows={7}
                   required
                   value={formData.message}
                   onChange={handleChange}
-                  rows={6}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white resize-none focus:border-custom-red-500 focus:outline-none focus:ring-1 focus:ring-custom-red-500 transition-all duration-300 font-googly"
-                  placeholder="Write your messages"
-                ></textarea>
-              </motion.div>
+                  placeholder="Write your message here…"
+                  className={inputCls + " resize-none"}
+                />
+              </Field>
 
-              <motion.button
-                type="submit"
-                className="w-full md:w-auto px-8 py-3 bg-custom-red-600 hover:bg-custom-red-700 text-white font-medium rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 font-googly"
-                variants={formItemVariants}
-                custom={3}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <motion.div
-                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                    />
-                    <span>SENDING...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    <span>SEND MESSAGE</span>
-                  </>
-                )}
-              </motion.button>
+              {error && (
+                <div className="border border-vermillion/60 bg-vermillion/5 p-4 text-sm text-ivory">
+                  {error}
+                </div>
+              )}
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="group inline-flex items-center gap-4 bg-gold text-ink px-10 py-5 text-[11px] tracking-[0.32em] uppercase font-medium hover:bg-ivory transition-colors disabled:opacity-60"
+                >
+                  {isSubmitting ? "Sending…" : "Send Message"}
+                  <Arrow />
+                </button>
+              </div>
             </motion.form>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
 
       {/* Modal */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/85 backdrop-blur-md p-6"
           >
             <motion.div
-              className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-white border border-gray-800"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              initial={{ scale: 0.96, y: 12, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ duration: 0.4, ease }}
+              className="bg-ink-2 border border-gold/40 max-w-md w-full p-10 noise"
             >
-              <div className="flex justify-between items-start mb-4">
-                <motion.h2
-                  className="text-2xl font-bold text-custom-red-500 font-googly"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  Thank You for Contacting Us
-                </motion.h2>
-                <motion.button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-full"
-                  whileHover={{ rotate: 90, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <X className="h-5 w-5" />
-                </motion.button>
-              </div>
-
-              <motion.div
-                className="h-0.5 w-full bg-gray-800 mb-4"
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-              />
-
-              <motion.p
-                className="mb-6 text-gray-300 font-googly"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                We appreciate your message. Our team will get back to you as
-                soon as possible.
-              </motion.p>
-
-              <motion.button
+              <span className="eyebrow">Received</span>
+              <h2 className="display-md mt-5 text-ivory">Thank you.</h2>
+              <div className="hairline-fade-x my-6" />
+              <p className="text-ivory-muted text-sm leading-relaxed">
+                We have your message and will respond shortly. In the meantime,
+                feel free to explore our menu or reserve a table directly.
+              </p>
+              <button
                 onClick={() => setIsModalOpen(false)}
-                className="w-full px-4 py-3 bg-custom-red-600 hover:bg-custom-red-700 text-white rounded-full font-googly flex items-center justify-center"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                className="mt-8 w-full border border-gold text-gold py-4 text-[11px] tracking-[0.32em] uppercase hover:bg-gold hover:text-ink transition-colors"
               >
                 Close
-              </motion.button>
+              </button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
+  );
+}
+
+const inputCls =
+  "w-full bg-ink-2 border border-hairline-strong text-ivory placeholder:text-ivory-faint px-4 py-3.5 text-sm focus:outline-none focus:border-gold transition-colors";
+
+function Field({
+  label,
+  htmlFor,
+  index,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  index: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label htmlFor={htmlFor} className="flex items-baseline gap-3 mb-3">
+        <span className="font-display text-sm text-ivory-faint">{index}</span>
+        <span className="eyebrow-ivory">{label}</span>
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function Detail({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="border-l border-gold/40 pl-5">
+      <div className="eyebrow mb-2">{label}</div>
+      <div className="text-ivory text-sm leading-relaxed">{value}</div>
+    </div>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="square">
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
   );
 }

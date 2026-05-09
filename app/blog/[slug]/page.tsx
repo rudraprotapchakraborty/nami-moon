@@ -1,139 +1,189 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
-import { notFound } from "next/navigation"
+import Image from "next/image";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
+import { notFound } from "next/navigation";
 
 function getBlogPost(slug: string) {
   const blogPosts = [
     {
       slug: "year-of-excellence",
-      title: "A Year of Excellence: Yuzu Omakase's Journey",
+      title: "A year of excellence, a year of restraint.",
       excerpt:
-        "Reflecting on our remarkable first year, the challenges we've overcome, and the unforgettable moments we've created for our valued guests.",
+        "Reflecting on our remarkable first year — the kitchen we built, the disciplines we kept, and the quiet moments shared with our guests.",
       content: `
-        <p>As we celebrate the first anniversary of Yuzu Omakase, we can't help but feel a profound sense of gratitude and accomplishment. What began as a dream to revolutionize the omakase experience in our city has blossomed into a culinary destination that has exceeded our wildest expectations.</p>
-        
-        <h2>Our Humble Beginnings</h2>
-        <p>When we first opened our doors, we were driven by a passion for Japanese cuisine and a vision to create something truly unique. Our team, led by Master Chef Hiroshi Tanaka, set out to craft an omakase experience that would not only tantalize taste buds but also tell a story with every dish.</p>
-        
-        <h2>Overcoming Challenges</h2>
-        <p>The path to excellence was not without its hurdles. From sourcing the finest ingredients to perfecting our techniques, every day presented new challenges. But it was these very challenges that pushed us to innovate and elevate our craft.</p>
-        
-        <h2>Memorable Moments</h2>
-        <p>Throughout the year, we've had the pleasure of serving thousands of guests, each experience unique and special. From intimate date nights to grand celebrations, Yuzu Omakase has been the backdrop for countless memorable moments.</p>
-        
-        <h2>Looking Ahead</h2>
-        <p>As we look to the future, we're filled with excitement for what's to come. We're committed to continuing our journey of culinary excellence, always striving to surprise and delight our guests with new flavors and experiences.</p>
-        
-        <p>To all our patrons, staff, and supporters – thank you for being part of our story. Here's to many more years of exceptional dining at Yuzu Omakase!</p>
-      `,
-      image: "/placeholder.svg?height=600&width=1200",
-      date: "January 20, 2024",
-      author: "Yuzu Omakase Team",
-      authorImage: "/placeholder.svg?height=100&width=100",
-    },
-  ]
+        <p>As we mark our first anniversary, gratitude comes easily and the work, less so. What began as a quiet conviction — that Pan-Asian cuisine deserved a more considered home in Dhaka — has grown into a daily ritual we are still learning to honor.</p>
 
-  return blogPosts.find((post) => post.slug === slug)
+        <h2>Our humble beginnings</h2>
+        <p>When we first opened our doors, we were driven by a singular passion for Asian cuisine and a vision to create something honest. Our team set out to craft a dining experience that would not only delight, but tell a story with every dish — without raising its voice.</p>
+
+        <h2>Overcoming challenges</h2>
+        <p>The path was not without its hurdles. From sourcing the finest ingredients to perfecting our techniques, every day presented new lessons. But it was these very challenges that pushed us to refine our craft.</p>
+
+        <h2>Memorable moments</h2>
+        <p>Throughout the year, we have had the pleasure of serving thousands of guests, each evening unique. From intimate date nights to grand celebrations, Nami Moon has been the backdrop for many quiet, considered hours.</p>
+
+        <h2>Looking ahead</h2>
+        <p>As we look to the future, we are filled with excitement for what is to come. We remain committed to our journey of culinary excellence, always seeking to surprise and delight our guests with new flavors, new textures, new ideas.</p>
+
+        <p>To all our patrons, staff, and supporters — thank you for being part of our story.</p>
+      `,
+      image: "/about.jpg",
+      date: "January 20, 2024",
+      author: "The Nami Moon Team",
+      authorImage: "/logo.png",
+      read: "8 min",
+      category: "Anniversary",
+    },
+  ];
+  return blogPosts.find((post) => post.slug === slug);
 }
 
 function getRelatedArticles(currentSlug: string) {
   const allArticles = [
     {
       slug: "seasonal-ingredients-spring",
-      title: "Seasonal Ingredients: Spring Edition",
-      excerpt: "Explore the vibrant flavors of spring in Japanese cuisine.",
-      image: "/placeholder.svg?height=200&width=300",
+      title: "Seasonal Ingredients — Spring",
+      excerpt: "Vibrant flavors of spring across Asian kitchens.",
+      image: "/heroimg1.jpg",
+      category: "Chef's Special",
     },
     {
       slug: "sushi-etiquette",
-      title: "The Do's and Don'ts of Sushi Etiquette",
-      excerpt: "Learn the proper way to enjoy sushi and impress your dining companions.",
-      image: "/placeholder.svg?height=200&width=300",
+      title: "The Quiet Art of Sushi Etiquette",
+      excerpt: "How to enjoy sushi with grace.",
+      image: "/heroimg2.jpg",
+      category: "Culinary News",
     },
     {
       slug: "sake-pairing-guide",
       title: "A Beginner's Guide to Sake Pairing",
-      excerpt: "Discover how to pair sake with different types of Japanese dishes.",
-      image: "/placeholder.svg?height=200&width=300",
+      excerpt: "Choosing the right pour for the right plate.",
+      image: "/heroimg3.jpg",
+      category: "Culinary News",
     },
-  ]
-
-  return allArticles.filter((article) => article.slug !== currentSlug)
+  ];
+  return allArticles.filter((article) => article.slug !== currentSlug);
 }
 
 export default function BlogPost({ params }: { params: { slug: string } }) {
-  const post = getBlogPost(params.slug)
+  const post = getBlogPost(params.slug);
+  if (!post) notFound();
 
-  if (!post) {
-    notFound()
-  }
-
-  const relatedArticles = getRelatedArticles(params.slug)
+  const relatedArticles = getRelatedArticles(params.slug);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <Link href="/blog" className="inline-flex items-center text-custom-red-400 hover:text-custom-red-300 mb-8">
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Back to Blog
-        </Link>
-        <h1 className="text-4xl md:text-5xl font-medium mb-6">{post.title}</h1>
-        <div className="flex items-center mb-8">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
-            <Image src={post.authorImage || "/placeholder.svg"} alt={post.author} fill className="object-cover" />
+    <div className="bg-ink min-h-screen text-ivory">
+      {/* Article header */}
+      <article className="pt-36 md:pt-44 pb-20">
+        <div className="mx-auto max-w-3xl px-6">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-[11px] tracking-[0.32em] uppercase text-ivory-muted hover:text-gold transition-colors mb-12"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Journal
+          </Link>
+
+          <div className="flex items-center gap-3 text-[10px] tracking-[0.3em] uppercase text-ivory-muted mb-8">
+            <span className="text-gold">{post.category}</span>
+            <span className="h-3 w-px bg-hairline-strong" />
+            <span>{post.date}</span>
+            <span className="h-3 w-px bg-hairline-strong" />
+            <span>{post.read}</span>
           </div>
-          <div>
-            <p className="font-medium">{post.author}</p>
-            <p className="text-sm text-gray-400">{post.date}</p>
+
+          <h1 className="display-lg text-ivory text-balance">{post.title}</h1>
+          <p className="mt-8 font-display text-xl md:text-2xl italic text-ivory-dim leading-snug text-balance">
+            {post.excerpt}
+          </p>
+
+          <div className="flex items-center gap-4 mt-12 pt-8 border-t border-hairline">
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border border-hairline-strong">
+              <Image src={post.authorImage} alt={post.author} fill className="object-contain p-2 bg-ink-2" />
+            </div>
+            <div>
+              <div className="eyebrow-ivory">By</div>
+              <div className="text-ivory text-sm">{post.author}</div>
+            </div>
           </div>
-        </div>
-        <div className="relative w-full h-[400px] mb-8 rounded-lg overflow-hidden">
-          <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
-        </div>
-        <div className="prose prose-invert max-w-none mb-16">
-          <p className="text-xl mb-8 text-gray-300">{post.excerpt}</p>
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </div>
 
-        {/* Related Articles */}
-        <div className="border-t border-gray-800 pt-16">
-          <h2 className="text-3xl font-medium mb-8">Related Articles</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+        {/* Lead image */}
+        <div className="mt-16">
+          <div className="relative aspect-[16/9] max-w-6xl mx-auto bg-ink-3 overflow-hidden">
+            <Image src={post.image} alt={post.title} fill priority className="object-cover" />
+          </div>
+        </div>
+      </article>
+
+      {/* Body */}
+      <section className="pb-24">
+        <div className="mx-auto max-w-2xl px-6">
+          <div
+            className="prose-editorial"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
+        </div>
+      </section>
+
+      {/* Related */}
+      <section className="border-t border-hairline py-20">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="flex items-center gap-4 mb-10">
+            <span className="eyebrow">Continue Reading</span>
+            <span className="rule-gold" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
             {relatedArticles.map((article) => (
-              <Link key={article.slug} href={`/blog/${article.slug}`} className="group">
-                <div className="relative aspect-[3/2] rounded-lg overflow-hidden mb-4">
+              <Link key={article.slug} href={`/blog/${article.slug}`} className="group block">
+                <div className="relative aspect-[4/5] mb-5 overflow-hidden bg-ink-3">
                   <Image
-                    src={article.image || "/placeholder.svg"}
+                    src={article.image}
                     alt={article.title}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.05]"
                   />
                 </div>
-                <h3 className="text-xl font-medium mb-2 group-hover:text-custom-red-400 transition-colors">
+                <div className="eyebrow text-gold mb-3">{article.category}</div>
+                <h3 className="font-display text-2xl text-ivory group-hover:text-gold transition-colors leading-tight">
                   {article.title}
                 </h3>
-                <p className="text-gray-400 text-sm">{article.excerpt}</p>
+                <p className="mt-3 text-ivory-muted text-sm">{article.excerpt}</p>
               </Link>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-medium mb-4">Experience Omakase at Yuzu</h3>
-          <p className="text-gray-300 mb-6">
-            Ready to embark on your own culinary journey? Book your omakase experience today.
+      {/* CTA */}
+      <section className="border-t border-hairline py-24 noise">
+        <div className="mx-auto max-w-2xl px-6 text-center">
+          <span className="eyebrow">Reserve</span>
+          <h3 className="display-md mt-6 text-ivory text-balance">
+            Experience Nami Moon for yourself.
+          </h3>
+          <p className="mt-6 text-ivory-muted text-base leading-relaxed max-w-md mx-auto">
+            Tables are released two weeks in advance. We'd love to host you.
           </p>
-          <Link href="/booking">
-            <button className="bg-custom-red-600 hover:bg-custom-red-700 text-white text-base px-6 py-2 rounded-full transition-colors duration-300 font-medium">
-              Book Now
-            </button>
+          <Link
+            href="/booking"
+            className="mt-10 inline-flex items-center gap-4 bg-gold text-ink px-10 py-5 text-[11px] tracking-[0.32em] uppercase font-medium hover:bg-ivory transition-colors"
+          >
+            Reserve a Table
+            <Arrow />
           </Link>
         </div>
-      </div>
+      </section>
     </div>
-  )
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="square">
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
+  );
 }

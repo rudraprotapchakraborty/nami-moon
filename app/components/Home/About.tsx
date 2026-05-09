@@ -1,255 +1,117 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import React, { useRef } from 'react';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import Image from "next/image";
+import Link from "next/link";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-const AboutSection: React.FC = () => {
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
-  const imageRef = useRef(null);
-  
-  // Parallax effect for image
-  const { scrollYProgress } = useScroll({
-    target: imageRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const imageY = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
-    }
-  };
+const ease = [0.22, 1, 0.36, 1] as const;
 
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.95, filter: "blur(5px)" },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
-    }
-  };
-  
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.6, 
-        ease: [0.22, 1, 0.36, 1],
-        delay: 0.8
-      }
-    },
-    hover: { 
-      scale: 1.05,
-      boxShadow: "0 10px 25px -5px rgba(220, 38, 38, 0.4)",
-      transition: { 
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    },
-    tap: { 
-      scale: 0.98,
-      boxShadow: "0 5px 15px -5px rgba(220, 38, 38, 0.4)",
-      transition: { 
-        duration: 0.15,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  return (
-    <motion.section 
-      className="py-24 bg-black relative overflow-hidden"
-      ref={sectionRef}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={containerVariants}
-    >
-      {/* Background gradient with animated particles */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 1.5 }}
-      />
-      
-      {/* Animated particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => {
-          const leftPos = ((i * 7919) % 100).toFixed(2);
-          const topPos = ((i * 104729) % 100).toFixed(2);
-          const yDistance = (((i * 307) % 100) + 50).toFixed(0);
-          const scale = (((i * 41) % 3) + 2).toFixed(1);
-          const duration = (((i * 101) % 5) + 5).toFixed(1);
-          const delay = ((i * 211) % 5).toFixed(1);
-          return (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-custom-red-500 rounded-full opacity-30"
-              style={{ left: `${leftPos}%`, top: `${topPos}%` }}
-              animate={{
-                y: [0, -parseInt(yDistance)],
-                opacity: [0.3, 0],
-                scale: [1, parseFloat(scale)],
-              }}
-              transition={{
-                duration: parseFloat(duration),
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "easeInOut",
-                delay: parseFloat(delay),
-              }}
-            />
-          );
-        })}
-      </div>
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <motion.div 
-            className="relative h-[600px] rounded-xl overflow-hidden shadow-2xl"
-            variants={imageVariants}
-            ref={imageRef}
-          >
-            <motion.div
-              className="relative h-full w-full"
-              style={{ y: imageY }}
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 1.2 }}
-            >
-              <Image
-                src="/about.jpg"
-                alt="Signature dessert presentation"
-                fill
-                className="object-cover rounded-xl"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />
-            </motion.div>
-            
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.7 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-            />
-            
-            {/* Decorative elements */}
-            <motion.div 
-              className="absolute -bottom-2 -left-2 w-24 h-24 border-l-2 border-b-2 border-custom-red-500"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.8 }}
-            />
-            <motion.div 
-              className="absolute -top-2 -right-2 w-24 h-24 border-r-2 border-t-2 border-custom-red-500"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.8 }}
-            />
-          </motion.div>
-          
-          <div className="space-y-8">
-            <motion.div variants={itemVariants}>
-              <motion.span 
-                className="inline-block text-sm uppercase tracking-wider text-custom-red-400 font-medium mb-2 font-googly"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
-                Our Story
-              </motion.span>
-              <motion.h2 
-                className="text-5xl font-medium text-custom-red-500 font-googly"
-                variants={itemVariants}
-              >
-                Who are we?
-              </motion.h2>
-            </motion.div>
-            
-            <div className="space-y-6">
-              <motion.h3 
-                className="text-2xl text-white italic font-googly"
-                variants={itemVariants}
-              >
-                From the visionaries who brought you a new dimension of Pan-Asian dining in Dhaka
-              </motion.h3>
-              
-              <motion.p 
-                className="text-gray-300 leading-relaxed"
-                variants={itemVariants}
-              >
-                The culinary journey that began with our passion for authentic Asian flavors has evolved into
-                something truly extraordinary. Our commitment to excellence drives us to explore the vast expanse of
-                Asian gastronomy, creating innovative dishes that honor tradition while embracing modernity.
-              </motion.p>
-              
-              <motion.div 
-                className="h-0.5 w-16 bg-custom-red-500 my-6"
-                initial={{ width: 0 }}
-                animate={{ width: 64 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              />
-              
-              <motion.h3 
-                className="text-2xl text-custom-red-500 font-googly"
-                variants={itemVariants}
-              >
-                Tradition meets Innovation
-              </motion.h3>
-              
-              <motion.p 
-                className="text-gray-300 leading-relaxed"
-                variants={itemVariants}
-              >
-                At Nami Moon, we believe that true culinary artistry lies in respecting traditional recipes while
-                daring to innovate. Each dish tells a story - a narrative of cultural heritage enhanced by
-                contemporary techniques and presentations. Our chefs masterfully blend time-honored cooking methods
-                with modern culinary innovations to create dishes that are both familiar and excitingly new.
-              </motion.p>
-              
-              <motion.p 
-                className="text-gray-300 leading-relaxed italic"
-                variants={itemVariants}
-              >
-                We craft each dish with precision, creativity, and an unwavering commitment to excellence, ensuring
-                every plate that leaves our kitchen is nothing short of extraordinary.
-              </motion.p>
-              
-              <motion.div
-                variants={buttonVariants}
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <a href="/about" className="inline-block px-8 py-3 bg-custom-red-600 text-white font-medium rounded-full hover:bg-custom-red-700 transition-all duration-300 font-googly">
-                  Learn More About Us
-                </a>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.section>
-  );
+const fade = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
 };
 
-export default AboutSection;
+export default function AboutSection() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+
+  return (
+    <section ref={ref} className="relative bg-ink-2 py-32 md:py-40 noise overflow-hidden">
+      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-stretch">
+          {/* Image — tall portrait */}
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="lg:col-span-6"
+          >
+            <div className="relative h-[600px] md:h-[760px] overflow-hidden bg-ink-3">
+              <motion.div style={{ y: imageY }} className="absolute inset-0">
+                <Image
+                  src="/about.jpg"
+                  alt="Inside Nami Moon"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover scale-110"
+                />
+              </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
+
+              {/* Floating quote card */}
+              <div className="absolute bottom-8 left-8 right-8 md:left-12 md:right-12 border border-gold/40 bg-ink-2/85 backdrop-blur-md p-7">
+                <span className="eyebrow">Our Story</span>
+                <p className="mt-4 font-display text-xl md:text-2xl italic text-ivory leading-snug text-balance">
+                  &ldquo;Tradition, served quietly — with the hands of those who learned it firsthand.&rdquo;
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Text */}
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            className="lg:col-span-6 flex flex-col justify-center"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <span className="eyebrow">N° 05</span>
+              <span className="block h-px w-16 bg-gold/50" />
+              <span className="eyebrow-ivory">Who We Are</span>
+            </div>
+
+            <h2 className="display-lg text-ivory text-balance mb-10">
+              From the visionaries who brought a new dimension of{" "}
+              <span className="italic font-light text-gold">Pan-Asian</span> dining to Dhaka.
+            </h2>
+
+            <div className="space-y-6 text-ivory-dim text-base md:text-lg leading-relaxed font-light max-w-xl">
+              <p>
+                The journey began with one obsession — authentic Asian flavor —
+                and grew into a quiet manifesto: explore the breadth of the
+                continent, honor the depth of its traditions, and express both
+                with restraint.
+              </p>
+
+              <div className="hairline-fade-x my-10" />
+
+              <p className="font-display text-2xl md:text-3xl text-gold italic leading-snug text-balance">
+                Tradition meets innovation.
+              </p>
+
+              <p>
+                Each dish tells a story — a quiet narrative of cultural heritage
+                refined through contemporary technique. We craft with precision
+                and an unwavering commitment to excellence, plate by plate.
+              </p>
+            </div>
+
+            <Link
+              href="/about"
+              className="group mt-12 inline-flex items-center gap-4 border border-gold text-gold px-7 py-4 text-[11px] tracking-[0.32em] uppercase hover:bg-gold hover:text-ink transition-colors w-fit"
+            >
+              Read Our Story
+              <Arrow />
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="square">
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
+  );
+}

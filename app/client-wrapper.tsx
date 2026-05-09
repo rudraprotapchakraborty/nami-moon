@@ -17,9 +17,15 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <LoadingBar color="#FF0000" progress={progress} onLoaderFinished={() => setProgress(0)} height={3} />
+      <LoadingBar
+        color="#c9a55c"
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+        height={2}
+        shadow={false}
+      />
       <Header />
-      <main className="pt-16">{children}</main>
+      <main>{children}</main>
       <Footer />
     </>
   );

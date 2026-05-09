@@ -1,21 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Image from 'next/image';
-import useEmblaCarousel from 'embla-carousel-react';
-import {
-  GiKnifeFork,
-  GiSushis,
-  GiNoodles,
-  GiChiliPepper,
-  GiIceCreamScoop,
-} from 'react-icons/gi';
-import { TbSoupFilled } from 'react-icons/tb';
-import { MdRamenDining } from 'react-icons/md';
-
-import { BiSolidBowlRice, BiSolidDrink } from 'react-icons/bi';
-import { RiDrinksFill } from 'react-icons/ri';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import useEmblaCarousel from "embla-carousel-react";
+import { motion } from "framer-motion";
 
 type MenuItem = {
   name: string;
@@ -26,185 +14,212 @@ type MenuItem = {
   price_beef?: number;
   description?: string;
 };
+type MenuData = Record<string, MenuItem[]>;
 
-type MenuData = {
-  [category: string]: MenuItem[];
-};
-
-const categoryConfig = [
-  { key: 'Appetizers', icon: GiKnifeFork, label: 'Appetizers' },
-  { key: 'Sushi', icon: GiSushis, label: 'Sushi' },
-  { key: 'Soup', icon: TbSoupFilled, label: 'Soup' },
-  { key: 'Noodles', icon: GiNoodles, label: 'Noodles' },
-  { key: 'Ramen', icon: MdRamenDining, label: 'Ramen' },
-  { key: 'Rice', icon: BiSolidBowlRice, label: 'Rice' },
-  { key: 'Curry', icon: GiChiliPepper, label: 'Curry' },
-  { key: 'Desserts', icon: GiIceCreamScoop, label: 'Desserts' },
-  { key: 'Drinks', icon: RiDrinksFill, label: 'Drinks' },
-  { key: 'Nami Moon Special Drinks', icon: BiSolidDrink, label: 'Special Drinks' },
+const categories = [
+  "Appetizers",
+  "Sushi",
+  "Soup",
+  "Noodles",
+  "Ramen",
+  "Rice",
+  "Curry",
+  "Desserts",
+  "Drinks",
 ];
 
-const MenuSection = () => {
+function priceLabel(item: MenuItem): string {
+  if (item.price !== undefined) return `৳ ${item.price}`;
+  if (item.price_5pcs && item.price_10pcs)
+    return `৳ ${item.price_5pcs} / ৳ ${item.price_10pcs}`;
+  if (item.price_chicken && item.price_beef)
+    return `Chicken ৳ ${item.price_chicken} · Beef ৳ ${item.price_beef}`;
+  return "—";
+}
+
+export default function MenuSection() {
   const [menuData, setMenuData] = useState<MenuData | null>(null);
-  const [selectedTab, setSelectedTab] = useState<string>('Appetizers');
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const [activeIndex, setActiveIndex] = useState(0);
-  const sectionRef = useRef(null);
+  const [tab, setTab] = useState<string>("Appetizers");
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: "start",
+    dragFree: true,
+  });
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const res = await fetch('/menu.json');
-        const data: MenuData = await res.json();
-        setMenuData(data);
-      } catch (error) {
-        console.error('Failed to fetch menu data:', error);
-      }
-    };
-
-    fetchMenu();
+    fetch("/menu.json")
+      .then((r) => r.json())
+      .then(setMenuData)
+      .catch((e) => console.error("Failed to fetch menu data:", e));
   }, []);
 
   useEffect(() => {
     if (!emblaApi) return;
-
-    emblaApi.on('select', () => {
-      setActiveIndex(emblaApi.selectedScrollSnap());
-    });
-
+    const onSelect = () => setActive(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
     return () => {
-      emblaApi.off('select', () => {
-        setActiveIndex(emblaApi.selectedScrollSnap());
-      });
+      emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
 
-  const scrollPrev = () => emblaApi?.scrollPrev();
-  const scrollNext = () => emblaApi?.scrollNext();
+  useEffect(() => {
+    emblaApi?.scrollTo(0);
+  }, [tab, emblaApi]);
 
-  if (!menuData) {
-    return (
-      <section className="py-20 text-center text-white">
-        <div className="w-16 h-16 border-t-4 border-red-500 border-solid rounded-full animate-spin mb-4 mx-auto"></div>
-        <p className="text-lg">Loading menu...</p>
-      </section>
-    );
-  }
-
-  const currentItems = menuData[selectedTab] || [];
+  const items = menuData?.[tab] ?? [];
 
   return (
-    <section id="menu" className="py-20 bg-black text-white relative overflow-hidden" ref={sectionRef}>
-      <div className="container mx-auto px-4 relative z-10">
-        <h2 className="font-googly text-3xl md:text-5xl font-medium text-center mb-6 text-custom-red-500">
-          OUR MENU
-        </h2>
-        <div className="h-1 w-24 bg-custom-red-500 mx-auto rounded-full mb-12" />
+    <section id="menu" className="relative bg-ink py-32 md:py-40 noise overflow-hidden">
+      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+        {/* Section header */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="eyebrow">N° 02</span>
+              <span className="block h-px w-16 bg-gold/50" />
+              <span className="eyebrow-ivory">The Menu</span>
+            </div>
+            <h2 className="display-lg text-ivory text-balance">
+              An <span className="italic font-light text-gold">unhurried</span>{" "}
+              tasting of Asia.
+            </h2>
+          </div>
+          <div className="lg:col-span-5 lg:col-start-8 self-end">
+            <p className="text-ivory-muted text-base leading-relaxed max-w-md">
+              Categories rotate by season — sashimi cut to order, curries
+              simmered through the morning, drinks built around what arrived
+              at the market that week.
+            </p>
+            <Link
+              href="/menu"
+              className="group mt-8 inline-flex items-center gap-3 text-gold text-[11px] tracking-[0.32em] uppercase border-b border-gold/40 pb-1 hover:border-gold transition-colors"
+            >
+              View Full Menu
+              <Arrow />
+            </Link>
+          </div>
+        </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {categoryConfig.map(({ key, icon: Icon, label }) => (
-            <button
-              key={key}
-              onClick={() => setSelectedTab(key)}
-              className={`font-googly flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                selectedTab === key
-                  ? 'bg-red-500 text-white border-red-500'
-                  : 'bg-white/10 text-white border-gray-700 hover:bg-white/20'
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-sm font-medium">{label}</span>
-            </button>
-          ))}
+        <div className="flex flex-wrap gap-x-8 gap-y-3 mb-14 border-y border-hairline py-5">
+          {categories.map((cat) => {
+            const selected = tab === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setTab(cat)}
+                className={`relative text-[11px] tracking-[0.28em] uppercase font-medium transition-colors ${
+                  selected ? "text-gold" : "text-ivory-muted hover:text-ivory"
+                }`}
+              >
+                {cat}
+                {selected && (
+                  <motion.span
+                    layoutId="menu-tab-underline"
+                    className="absolute -bottom-[22px] left-0 right-0 h-px bg-gold"
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Carousel */}
-        <div className="relative">
-          <div className="relative overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-6">
-              {currentItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex-[0_0_280px] md:flex-[0_0_320px] min-w-0"
-                >
-                  <div className="group relative overflow-hidden rounded-lg cursor-pointer h-72 shadow-xl bg-black/40">
-                    <div className="relative h-full w-full">
-                      <Image
-                        src="/logo.png"
-                        alt={item.name}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-80" />
-                    </div>
-                    <div className="absolute inset-0 flex flex-col justify-end p-6">
-                      <h3 className="font-googly text-sm font-bold mb-1 uppercase text-white">
+        {!menuData ? (
+          <div className="py-32 text-center text-ivory-muted text-sm tracking-widest uppercase">
+            Loading…
+          </div>
+        ) : items.length === 0 ? (
+          <div className="py-24 text-center text-ivory-muted">
+            No items in this category.
+          </div>
+        ) : (
+          <div className="relative">
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-px">
+                {items.map((item, i) => (
+                  <article
+                    key={`${item.name}-${i}`}
+                    className="flex-[0_0_85%] sm:flex-[0_0_55%] md:flex-[0_0_38%] lg:flex-[0_0_28%] min-w-0 group"
+                  >
+                    <div className="relative h-full bg-ink-2 border border-hairline group-hover:border-gold/40 transition-colors duration-500 p-8 md:p-10">
+                      <div className="flex items-center justify-between mb-6">
+                        <span className="eyebrow text-ivory-faint">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="text-ivory-faint text-[10px] tracking-[0.3em] uppercase">
+                          {tab}
+                        </span>
+                      </div>
+                      <h3 className="font-display text-2xl md:text-[28px] leading-tight text-ivory text-balance min-h-[64px]">
                         {item.name}
                       </h3>
                       {item.description && (
-                        <p className="text-xs text-gray-300 mb-2">
+                        <p className="mt-4 text-ivory-muted text-sm leading-relaxed line-clamp-3">
                           {item.description}
                         </p>
                       )}
-                      <p className="font-googly text-custom-red-300 text-sm font-medium">
-                        {item.price
-                          ? `৳${item.price}`
-                          : item.price_5pcs && item.price_10pcs
-                          ? `৳${item.price_5pcs} / ৳${item.price_10pcs}`
-                          : item.price_chicken && item.price_beef
-                          ? `Chicken: ৳${item.price_chicken} / Beef: ৳${item.price_beef}`
-                          : 'Price Unavailable'}
-                      </p>
+                      <div className="mt-10 pt-6 border-t border-hairline flex items-center justify-between">
+                        <span className="font-display text-xl text-gold">
+                          {priceLabel(item)}
+                        </span>
+                        <span className="text-ivory-faint text-[10px] tracking-[0.3em] uppercase">
+                          ●
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="mt-10 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-ivory-faint text-[11px] tracking-[0.3em]">
+                <span className="text-ivory">
+                  {String(active + 1).padStart(2, "0")}
+                </span>
+                <span>/</span>
+                <span>{String(items.length).padStart(2, "0")}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => emblaApi?.scrollPrev()}
+                  aria-label="Previous"
+                  className="h-11 w-11 inline-flex items-center justify-center border border-hairline-strong text-ivory-muted hover:text-gold hover:border-gold transition-colors"
+                >
+                  <Arrow flip />
+                </button>
+                <button
+                  onClick={() => emblaApi?.scrollNext()}
+                  aria-label="Next"
+                  className="h-11 w-11 inline-flex items-center justify-center border border-hairline-strong text-ivory-muted hover:text-gold hover:border-gold transition-colors"
+                >
+                  <Arrow />
+                </button>
+              </div>
             </div>
           </div>
-
-          {/* Navigation Buttons */}
-          <button
-            onClick={scrollPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-red-600 text-white p-3 rounded-full hover:bg-red-700 transition-colors z-10"
-            aria-label="Previous slide"
-          >
-            <FaChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            onClick={scrollNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-600 text-white p-3 rounded-full hover:bg-red-700 transition-colors z-10"
-            aria-label="Next slide"
-          >
-            <FaChevronRight className="h-5 w-5" />
-          </button>
-
-          {/* Pagination Dots */}
-          <div className="flex justify-center mt-8 gap-2">
-            {currentItems.map((_, index) => (
-              <button
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  activeIndex === index ? 'bg-red-500 w-6' : 'bg-gray-500'
-                }`}
-                onClick={() => emblaApi?.scrollTo(index)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Full Menu Button */}
-        <div className="text-center mt-12">
-          <a
-            href="/menu"
-            className="font-googly inline-block bg-red-500 text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-red-600 transition-colors duration-300"
-          >
-            View Full Menu
-          </a>
-        </div>
+        )}
       </div>
     </section>
   );
-};
+}
 
-export default MenuSection;
+function Arrow({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="square"
+      style={{ transform: flip ? "scaleX(-1)" : undefined }}
+    >
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
+  );
+}

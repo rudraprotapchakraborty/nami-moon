@@ -1,290 +1,258 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { useRef } from "react"
-import { motion, useInView, useScroll, useTransform } from "framer-motion"
+import Image from "next/image";
+import Link from "next/link";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const fade = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
+};
+
+const gridImages = [
+  { src: "/galleries/item1.jpg",  alt: "Blue Lagoon Mocktail" },
+  { src: "/galleries/item5.jpg",  alt: "Beef Bulgogi Bowl" },
+  { src: "/galleries/item9.jpg",  alt: "Minced Lamb Curry" },
+  { src: "/galleries/item14.jpg", alt: "Tempura Platter" },
+  { src: "/galleries/item11.jpg", alt: "Octopus Stir-Fry" },
+  { src: "/galleries/item18.jpg", alt: "Steamed Dumplings" },
+];
+
+const principles = [
+  { n: "01", title: "Source weekly", body: "Markets first, menus second. We design around what arrives." },
+  { n: "02", title: "Plate quietly",  body: "Restraint over flourish. Composition over volume." },
+  { n: "03", title: "Honor the recipe", body: "Tradition isn't a constraint — it's the foundation we build on." },
+];
 
 export default function AboutPage() {
-  const pageRef = useRef(null)
-  const heroRef = useRef(null)
-  const gridRef = useRef(null)
-  const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 })
-  const isGridInView = useInView(gridRef, { once: true, amount: 0.1 })
-  
-  // Parallax effect for hero image
+  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    offset: ["start end", "end start"]
-  })
-  
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 100])
-  
-  const gridImages = [
-    { src: "/galleries/item1.jpg", alt: "Blue Lagoon Mocktail" },
-    { src: "/galleries/item2.jpg", alt: "Iced Coffee Trio" },
-    { src: "/galleries/item3.jpg", alt: "Creamy Milkshakes" },
-    { src: "/galleries/item4.jpg", alt: "Seafood Fried Rice" },
-    { src: "/galleries/item5.jpg", alt: "Beef Bulgogi Bowl" },
-    { src: "/galleries/item6.jpg", alt: "Classic Veg Fried Rice" },
-    { src: "/galleries/item7.jpg", alt: "Spicy Egg Rice Bowl" },
-    { src: "/galleries/item8.jpg", alt: "Chicken Fried Rice" },
-    { src: "/galleries/item9.jpg", alt: "Sashimi Platter" },
-  ]
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
-    }
-  }
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
-    }
-  }
-  
-  const gridVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1
-      }
-    }
-  }
-  
-  const gridItemVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: (i: number) => ({
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    })
-  }
+    offset: ["start start", "end start"],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   return (
-    <motion.div 
-      className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      ref={pageRef}
-    >
-      {/* Background gradient effect */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.8 }}
-        transition={{ duration: 1.5 }}
-      />
-      
-      <div className="max-w-5xl mx-auto px-4 py-20 relative z-10">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          <motion.h1 
-            className="text-5xl md:text-6xl font-medium mb-4 text-center text-custom-red-500 font-googly"
-            variants={itemVariants}
-          >
-            ABOUT US
-          </motion.h1>
-          
-          <motion.div 
-            className="h-1 w-24 bg-custom-red-500 mx-auto rounded-full mb-16"
-            initial={{ width: 0 }}
-            animate={{ width: 96 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-          />
-          
-          {/* Hero Image */}
-          <motion.div 
-            className="relative w-full h-[400px] md:h-[500px] mb-16 rounded-xl overflow-hidden shadow-2xl"
-            variants={itemVariants}
-            ref={heroRef}
-          >
-            <motion.div
-              style={{ y: heroY }}
-              className="absolute inset-0"
-            >
-              <Image
-                src="/about.jpg"
-                alt="Nami Moon Interior"
-                fill
-                className="object-cover"
-                priority
-              />
-            </motion.div>
-            
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.7 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-            />
-            
-            {/* Decorative elements */}
-            <motion.div 
-              className="absolute -bottom-2 -left-2 w-24 h-24 border-l-2 border-b-2 border-custom-red-500"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.8 }}
-            />
-            <motion.div 
-              className="absolute -top-2 -right-2 w-24 h-24 border-r-2 border-t-2 border-custom-red-500"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.8 }}
-            />
-          </motion.div>
-
-          {/* Tagline */}
-          <motion.h2 
-            className="text-2xl md:text-4xl font-medium text-center mb-12 font-googly italic text-white"
-            variants={itemVariants}
-          >
-            "Catching the Culinary Dream."
-          </motion.h2>
-
-          {/* Description */}
-          <motion.div 
-            className="max-w-3xl mx-auto space-y-8 text-gray-300 text-center mb-16"
-            variants={itemVariants}
-          >
-            <motion.p 
-              className="leading-relaxed text-lg"
-              variants={itemVariants}
-            >
-              At Nami Moon, we bring the soul of Asia&apos;s vibrant flavors to your table. Inspired by the rhythm of the
-              tides and the beauty of the moon, our restaurant is a celebration of Pan-Asian cuisine—bold, authentic, and
-              crafted with passion.
-            </motion.p>
-            
-            <motion.p 
-              className="leading-relaxed text-lg"
-              variants={itemVariants}
-            >
-              From the sizzling woks of Bangkok to the delicate artistry of Japanese sushi, the spice-laden curries of
-              India to the comforting broths of Korea, our menu is a journey across Asia&apos;s diverse culinary
-              landscapes. We honor tradition while embracing innovation, using the freshest ingredients to create dishes
-              that are both nostalgic and exciting.
-            </motion.p>
-            
-            <motion.p 
-              className="leading-relaxed text-lg"
-              variants={itemVariants}
-            >
-              Step into our space, where warm hospitality meets an atmosphere as dynamic as the flavors we serve. Whether
-              you're here for a quick bite, a family gathering, or a night out with friends, Nami Moon is your gateway to
-              an unforgettable dining experience.
-            </motion.p>
-            
-            <motion.p 
-              className="leading-relaxed text-lg font-medium text-custom-red-400 italic"
-              variants={itemVariants}
-            >
-              Visit us using the QR code below, and let the flavors of Asia take you somewhere special.
-            </motion.p>
-          </motion.div>
-
-          {/* QR Code */}
-          <motion.div 
-            className="flex justify-center mb-20"
-            variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="w-40 h-40 bg-white p-4 rounded-xl shadow-lg shadow-custom-red-500/20 relative">
-              <div className="relative w-full h-full">
-                <Image
-                  src="/qr-code.png"
-                  alt="Nami Moon QR Code"
-                  fill
-                  className="object-contain"
-                />
+    <div className="bg-ink min-h-screen text-ivory">
+      {/* Header */}
+      <section className="relative pt-36 md:pt-44 pb-16 noise border-b border-hairline">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-7">
+              <div className="flex items-center gap-4 mb-8">
+                <span className="eyebrow">N° 05 · Our Story</span>
+                <span className="block h-px w-16 bg-gold/50" />
               </div>
-              <motion.div 
-                className="absolute -inset-1 rounded-xl border border-custom-red-500 opacity-50"
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  opacity: [0.5, 0.8, 0.5]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              />
+              <h1 className="display-xl text-ivory text-balance">
+                Catching the{" "}
+                <span className="italic font-light text-gold">culinary</span>{" "}
+                dream.
+              </h1>
+            </div>
+            <div className="lg:col-span-4 lg:col-start-9 self-end">
+              <p className="text-ivory-muted text-base leading-relaxed">
+                Inspired by the rhythm of the tides and the quiet of the moon,
+                Nami Moon is a celebration of Pan-Asian cuisine — bold,
+                authentic, and crafted with intention.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hero image with parallax */}
+      <div ref={heroRef} className="relative h-[60vh] md:h-[80vh] overflow-hidden bg-ink-3">
+        <motion.div style={{ y: heroY }} className="absolute inset-0">
+          <Image
+            src="/about.jpg"
+            alt="Inside Nami Moon"
+            fill
+            priority
+            className="object-cover scale-110"
+          />
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+        <div className="absolute bottom-0 inset-x-0 px-6 lg:px-10 pb-10 lg:pb-14">
+          <div className="mx-auto max-w-[1400px]">
+            <div className="flex items-center gap-4 text-[10px] tracking-[0.32em] uppercase text-ivory">
+              <span className="block h-px w-10 bg-gold" />
+              <span>Dhanmondi · Dhaka · Established 2024</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Manifesto */}
+      <section className="py-24 md:py-32">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20"
+          >
+            <div className="lg:col-span-5">
+              <span className="eyebrow">Manifesto</span>
+              <h2 className="display-lg mt-6 text-ivory text-balance">
+                Tradition,{" "}
+                <span className="italic font-light text-gold">served quietly.</span>
+              </h2>
+            </div>
+            <div className="lg:col-span-6 lg:col-start-7 space-y-8 text-ivory-dim text-lg leading-relaxed font-light">
+              <p>
+                At Nami Moon, we bring the soul of Asia&apos;s vibrant flavors to
+                your table. From the sizzling woks of Bangkok to the delicate
+                artistry of Japanese sushi, the spice-laden curries of India to
+                the comforting broths of Korea, our menu is a journey across
+                Asia&apos;s diverse culinary landscapes.
+              </p>
+              <p>
+                We honor tradition while embracing innovation, using the
+                freshest ingredients to create dishes that are both nostalgic
+                and exciting.
+              </p>
+              <p className="font-display text-2xl italic text-ivory">
+                Step into our space, where warm hospitality meets an atmosphere
+                as dynamic as the flavors we serve.
+              </p>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Image Grid */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          ref={gridRef}
-          variants={gridVariants}
-          initial="hidden"
-          animate={isGridInView ? "visible" : "hidden"}
-        >
-          {gridImages.map((image, index) => (
-            <motion.div 
-              key={index} 
-              className="relative aspect-square rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-red-700/50 transition-colors duration-300"
-              variants={gridItemVariants}
-              custom={index}
-              whileHover={{
-                scale: 1.03,
-                boxShadow: "0 20px 25px -5px rgba(255, 59, 59, 0.2), 0 10px 10px -5px rgba(255, 59, 59, 0.1)",
-              }}
-              transition={{ duration: 0.3 }}
-            >
+      {/* Principles */}
+      <section className="py-24 md:py-32 bg-ink-2 noise border-y border-hairline">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="flex items-center gap-4 mb-16">
+            <span className="eyebrow">Three Principles</span>
+            <span className="rule-gold" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hairline-strong">
+            {principles.map((p) => (
               <motion.div
-                className="relative h-full w-full"
-                initial={{ scale: 1 }}
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.6 }}
+                key={p.n}
+                variants={fade}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.3 }}
+                className="bg-ink-2 p-10 md:p-12 group"
+              >
+                <div className="font-display text-5xl md:text-6xl text-gold leading-none">
+                  {p.n}
+                </div>
+                <h3 className="mt-8 font-display text-3xl text-ivory">{p.title}</h3>
+                <p className="mt-5 text-ivory-muted text-base leading-relaxed">
+                  {p.body}
+                </p>
+                <div className="mt-10 h-px w-12 bg-gold/40 transition-all duration-500 group-hover:w-24" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* QR + visit */}
+      <section className="py-24 md:py-32">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+            <motion.div
+              variants={fade}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.4 }}
+              className="lg:col-span-5"
+            >
+              <div className="relative inline-block">
+                <div className="bg-ivory p-6 shadow-soft">
+                  <div className="relative w-44 h-44">
+                    <Image src="/qr-code.png" alt="Nami Moon QR Code" fill className="object-contain" />
+                  </div>
+                </div>
+                <div className="absolute -bottom-3 -right-3 bg-gold text-ink px-4 py-1.5 text-[10px] tracking-[0.32em] uppercase font-medium">
+                  Scan
+                </div>
+              </div>
+            </motion.div>
+            <motion.div
+              variants={fade}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.4 }}
+              className="lg:col-span-6 lg:col-start-7"
+            >
+              <span className="eyebrow">Visit Us</span>
+              <h3 className="display-md mt-5 text-ivory text-balance">
+                Take the flavors of Asia somewhere{" "}
+                <span className="italic font-light text-gold">special.</span>
+              </h3>
+              <p className="mt-6 text-ivory-muted text-base leading-relaxed max-w-md">
+                Scan the code to find us, view our menu, or book a table. We're
+                open daily for lunch and dinner.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/booking"
+                  className="inline-flex items-center gap-4 bg-gold text-ink px-8 py-4 text-[11px] tracking-[0.32em] uppercase font-medium hover:bg-ivory transition-colors"
+                >
+                  Reserve a Table <Arrow />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-3 text-ivory text-[11px] tracking-[0.32em] uppercase border-b border-hairline-strong hover:border-gold pb-2 transition-colors"
+                >
+                  Contact Us <Arrow />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Image grid */}
+      <section className="pb-24 md:pb-32">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="flex items-center gap-4 mb-12">
+            <span className="eyebrow">From the Kitchen</span>
+            <span className="rule-gold" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            {gridImages.map((img, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.7, delay: (i % 3) * 0.06, ease }}
+                className="relative aspect-square overflow-hidden bg-ink-3 group"
               >
                 <Image
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
+                  src={img.src}
+                  alt={img.alt}
                   fill
-                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.05]"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" />
+                <div className="absolute bottom-0 inset-x-0 p-5 translate-y-2 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="font-display text-lg text-ivory">{img.alt}</div>
+                </div>
               </motion.div>
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-center pb-4"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.p 
-                  className="text-white text-center font-googly px-4"
-                  initial={{ y: 20, opacity: 0 }}
-                  whileHover={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {image.alt}
-                </motion.p>
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </motion.div>
-  )
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="square">
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
+  );
 }

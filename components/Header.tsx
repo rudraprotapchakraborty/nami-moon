@@ -3,8 +3,16 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+
+const menuItems = [
+  { name: "Home", href: "/" },
+  { name: "Menu", href: "/menu" },
+  { name: "Galleries", href: "/galleries" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,184 +20,219 @@ export function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const menuItems = [
-    { name: "HOME", href: "/" },
-    { name: "MENU", href: "/menu" },
-    { name: "GALLERIES", href: "/galleries" },
-    { name: "ABOUT US", href: "/about" },
-    { name: "CONTACT US", href: "/contact" },
-  ];
+  useEffect(() => setIsOpen(false), [pathname]);
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-gray-900/90 backdrop-blur-md shadow-lg py-3"
-          : "bg-gray-900/70 backdrop-blur-sm py-5"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-3 group">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+    <>
+      <motion.nav
+        initial={{ y: -16, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "bg-ink/80 backdrop-blur-xl border-b border-hairline"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div
+            className={`flex items-center justify-between transition-all duration-500 ${
+              scrolled ? "h-16" : "h-20"
+            }`}
           >
-            <Image
-              src="/logo.png"
-              alt="Nami Moon Logo"
-              width={48}
-              height={48}
-              className="h-16 w-auto transition-all duration-300"
-            />
-          </motion.div>
-          <motion.span
-            className="text-2xl font-bold text-white tracking-wide font-googly"
-            whileHover={{ color: "#ff4d4d" }}
-            transition={{ duration: 0.2 }}
-          >
-            Nami-moon
-          </motion.span>
-        </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8 text-sm">
-          {menuItems.map((item) => (
-            <Link key={item.name} href={item.href}>
-              <motion.div
-                className="relative"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <span
-                  className={`text-gray-300 hover:text-custom-red-400 font-semibold text-base whitespace-nowrap transition-colors duration-300 font-googly ${
-                    pathname === item.href ? "text-custom-red-400" : ""
-                  }`}
-                >
-                  {item.name}
+            {/* Brand */}
+            <Link href="/" className="flex items-center gap-3 group">
+              <Image
+                src="/logo.png"
+                alt="Nami Moon"
+                width={44}
+                height={44}
+                className={`w-auto transition-all duration-500 ${
+                  scrolled ? "h-9" : "h-11"
+                }`}
+              />
+              <div className="hidden sm:flex flex-col leading-none">
+                <span className="font-display text-xl tracking-wide text-ivory">
+                  Nami Moon
                 </span>
-                {pathname === item.href && (
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-custom-red-400"
-                    layoutId="underline"
-                  />
-                )}
-              </motion.div>
+                <span className="eyebrow mt-1 text-[9px]">Pan-Asian · Dhaka</span>
+              </div>
             </Link>
-          ))}
-          <Link href="/booking">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-custom-red-600 hover:bg-custom-red-700 text-white text-base transition-colors duration-300 rounded-full px-6 py-2 font-googly relative overflow-hidden group"
-            >
-              <span className="relative z-10">BOOK NOW</span>
-              <motion.span
-                className="absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 opacity-0 group-hover:opacity-70 transition-opacity duration-500"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-              <motion.span
-                className="absolute left-0 top-0 h-full w-1 bg-white shadow-[0_0_10px_3px_rgba(255,255,255,0.7)] opacity-0 group-hover:opacity-100"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "400%" }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              />
-            </motion.button>
-          </Link>
-        </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 text-gray-300 hover:text-custom-red-400 transition-colors duration-200"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <div className="w-6 h-5 flex flex-col justify-between">
-            <span
-              className={`w-full h-0.5 bg-current transform transition-all duration-300 origin-left ${
-                isOpen ? "rotate-45 translate-y-px" : ""
-              }`}
-            ></span>
-            <span
-              className={`w-full h-0.5 bg-current transition-all duration-300 ${
-                isOpen ? "opacity-0" : ""
-              }`}
-            ></span>
-            <span
-              className={`w-full h-0.5 bg-current transform transition-all duration-300 origin-left ${
-                isOpen ? "-rotate-45 -translate-y-px" : ""
-              }`}
-            ></span>
-          </div>
-          <span className="sr-only">Toggle menu</span>
-        </button>
+            {/* Desktop nav */}
+            <ul className="hidden md:flex items-center gap-10">
+              {menuItems.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <li key={item.name} className="relative">
+                    <Link
+                      href={item.href}
+                      className={`text-[12px] tracking-[0.28em] uppercase font-medium transition-colors duration-300 ${
+                        active
+                          ? "text-ivory"
+                          : "text-ivory-muted hover:text-ivory"
+                      }`}
+                    >
+                      {item.name}
+                      {active && (
+                        <motion.span
+                          layoutId="nav-underline"
+                          className="absolute -bottom-2 left-0 right-0 h-px bg-gold"
+                        />
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
 
-        {/* Mobile Drawer */}
-        {isOpen && (
-          <motion.div
-            initial={{ x: 300 }}
-            animate={{ x: 0 }}
-            exit={{ x: 300 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-y-0 right-0 w-[300px] bg-gray-900 text-gray-300 border-l border-gray-800 p-6 z-50 md:hidden"
-          >
-            <div className="flex flex-col gap-4 mt-8">
-              {menuItems.map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link
-                    href={item.href}
-                    className={`text-lg hover:text-custom-red-400 transition-colors duration-300 block py-2 font-googly ${
-                      pathname === item.href ? "text-custom-red-400" : ""
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: menuItems.length * 0.1 }}
+            {/* Reserve CTA */}
+            <div className="hidden md:flex items-center gap-6">
+              <Link
+                href="/booking"
+                className="group relative inline-flex items-center gap-3 text-[11px] tracking-[0.32em] uppercase font-medium text-ivory pl-5 pr-1 py-3"
               >
-                <Link href="/booking" onClick={() => setIsOpen(false)}>
-                  <button className="bg-custom-red-600 hover:bg-custom-red-700 text-white mt-4 w-full transition-all duration-300 rounded-full py-2 font-googly relative overflow-hidden group">
-                    <span className="relative z-10">BOOK NOW</span>
-                    <motion.span
-                      className="absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 opacity-0 group-hover:opacity-70 transition-opacity duration-500"
-                      initial={{ x: "-100%" }}
-                      animate={{ x: "100%" }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                    <motion.span
-                      className="absolute left-0 top-0 h-full w-1 bg-white shadow-[0_0_10px_3px_rgba(255,255,255,0.7)] opacity-0 group-hover:opacity-100"
-                      initial={{ x: "-100%" }}
-                      animate={{ x: "400%" }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                  </button>
-                </Link>
-              </motion.div>
+                <span className="relative z-10">Reserve</span>
+                <span className="relative z-10 inline-flex h-9 w-9 items-center justify-center border border-gold text-gold transition-all duration-300 group-hover:bg-gold group-hover:text-ink">
+                  <ArrowRight />
+                </span>
+                <span className="absolute inset-y-0 left-0 right-10 border-y border-l border-hairline-strong transition-colors duration-300 group-hover:border-gold/40" />
+              </Link>
             </div>
-          </motion.div>
+
+            {/* Mobile trigger */}
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => setIsOpen((o) => !o)}
+              className="md:hidden inline-flex h-10 w-10 items-center justify-center text-ivory border border-hairline-strong"
+            >
+              <div className="flex flex-col gap-[5px]">
+                <span
+                  className={`block h-px w-5 bg-current transition-transform duration-300 ${
+                    isOpen ? "translate-y-[3px] rotate-45" : ""
+                  }`}
+                />
+                <span
+                  className={`block h-px w-5 bg-current transition-all duration-300 ${
+                    isOpen ? "opacity-0" : ""
+                  }`}
+                />
+                <span
+                  className={`block h-px w-5 bg-current transition-transform duration-300 ${
+                    isOpen ? "-translate-y-[5px] -rotate-45" : ""
+                  }`}
+                />
+              </div>
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-40 bg-ink/70 backdrop-blur-sm md:hidden"
+            />
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-y-0 right-0 z-50 w-[86%] max-w-[380px] bg-ink-2 border-l border-hairline-strong p-8 md:hidden flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-12 pt-2">
+                <span className="eyebrow">Navigate</span>
+                <span className="text-ivory-faint text-[10px] tracking-[0.3em] uppercase">
+                  Nami Moon
+                </span>
+              </div>
+
+              <ul className="space-y-1">
+                {menuItems.map((item, i) => {
+                  const active = pathname === item.href;
+                  return (
+                    <motion.li
+                      key={item.name}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.1 + i * 0.05,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="border-b border-hairline last:border-b-0"
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className="group flex items-baseline justify-between py-5"
+                      >
+                        <span
+                          className={`font-display text-3xl transition-colors ${
+                            active ? "text-gold" : "text-ivory group-hover:text-gold"
+                          }`}
+                        >
+                          {item.name}
+                        </span>
+                        <span className="text-ivory-faint text-[10px] tracking-[0.3em]">
+                          0{i + 1}
+                        </span>
+                      </Link>
+                    </motion.li>
+                  );
+                })}
+              </ul>
+
+              <div className="mt-auto pt-12">
+                <Link
+                  href="/booking"
+                  onClick={() => setIsOpen(false)}
+                  className="group flex items-center justify-between border border-gold px-5 py-4 text-gold hover:bg-gold hover:text-ink transition-colors duration-300"
+                >
+                  <span className="text-[11px] tracking-[0.32em] uppercase font-medium">
+                    Reserve a Table
+                  </span>
+                  <ArrowRight />
+                </Link>
+                <p className="mt-6 text-ivory-faint text-xs leading-relaxed">
+                  Jigatola, Dhanmondi · Dhaka
+                  <br />
+                  <span className="text-ivory-muted">+880 1328-226610</span>
+                </p>
+              </div>
+            </motion.aside>
+          </>
         )}
-      </div>
-    </motion.nav>
+      </AnimatePresence>
+    </>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="square"
+    >
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
   );
 }

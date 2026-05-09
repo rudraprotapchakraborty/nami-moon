@@ -1,58 +1,296 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
-/* Dark mode via class strategy */
-@variant dark (&:where(.dark, .dark *));
+/* ============================================================
+   Nami Moon — editorial design system
+   palette: warm ink + ivory + vermillion + gold
+   ============================================================ */
 
-/* Inline theme: utilities reference these CSS variables at runtime */
-@theme inline {
-  --font-googly: var(--font-googly), system-ui, sans-serif;
-  --font-sans: var(--font-poppins), system-ui, sans-serif;
-
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-}
-
-/* Static theme values */
 @theme {
-  --color-custom-red-100: #ffcccb;
-  --color-custom-red-200: #ff9999;
-  --color-custom-red-300: #ff6666;
-  --color-custom-red-400: #ff3333;
-  --color-custom-red-500: #ff0000;
-  --color-custom-red-600: #cc0000;
-  --color-custom-red-700: #990000;
-  --color-custom-red-800: #660000;
-  --color-custom-red-900: #330000;
+  /* Surfaces */
+  --color-ink: #0a0a0c;
+  --color-ink-2: #111114;
+  --color-ink-3: #17181d;
+  --color-ink-4: #1f2128;
+  --color-ink-5: #2a2c35;
+
+  /* Foreground */
+  --color-ivory: #f4ede0;
+  --color-ivory-dim: #ddd5c5;
+  --color-ivory-muted: #a59f93;
+  --color-ivory-faint: #6e6a61;
+
+  /* Signature accents */
+  --color-vermillion: #c8392c;
+  --color-vermillion-soft: #d96a5e;
+  --color-vermillion-deep: #8b261d;
+  --color-gold: #c9a55c;
+  --color-gold-soft: #e3c995;
+  --color-gold-deep: #8a6f3d;
+
+  /* Hairline borders */
+  --color-hairline: rgba(244, 237, 224, 0.08);
+  --color-hairline-strong: rgba(244, 237, 224, 0.16);
+  --color-hairline-gold: rgba(201, 165, 92, 0.32);
+
+  /* Legacy aliases (kept so existing class names continue to work
+     while the theme reads coherently) */
+  --color-custom-red-100: #f4d8d3;
+  --color-custom-red-200: #e8a89f;
+  --color-custom-red-300: #d96a5e;
+  --color-custom-red-400: #c8392c;
+  --color-custom-red-500: #c8392c;
+  --color-custom-red-600: #a82e22;
+  --color-custom-red-700: #8b261d;
+  --color-custom-red-800: #5a1812;
+  --color-custom-red-900: #3a0f0b;
 }
+
+@theme inline {
+  /* Display = serif, sans = body. The "googly" name is preserved as an
+     internal alias so existing utility usages keep working. */
+  --font-googly: var(--font-display), "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --font-display: var(--font-display), "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --font-sans: var(--font-body), "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --radius: 2px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.005em;
+  }
+
+  ::selection {
+    background-color: var(--color-vermillion);
+    color: var(--color-ivory);
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-ink-4);
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gold-deep);
+  }
+
+  /* Editorial heading tightening for the serif */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    font-weight: 400;
+  }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
 
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Editorial eyebrow label — small caps, wide tracking */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-gold);
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+  .eyebrow-ivory {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-ivory-muted);
   }
+
+  /* Hairline rule — used inline with eyebrow labels */
+  .rule-gold {
+    height: 1px;
+    background: var(--color-gold);
+    flex: 1;
+    opacity: 0.55;
+  }
+
+  .rule-ivory {
+    height: 1px;
+    background: var(--color-hairline-strong);
+    flex: 1;
+  }
+
+  /* Subtle film-grain noise texture overlay */
+  .noise {
+    position: relative;
+  }
+  .noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 200px 200px;
+  }
+
+  /* Editorial display sizes — exposed as utilities */
+  .display-xl {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 9vw, 8.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    font-weight: 300;
+  }
+  .display-lg {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 6vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    font-weight: 300;
+  }
+  .display-md {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty;  }
+
+  /* Vertical text accent */
+  .vertical-rl {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  /* Magnetic hover shadow used on premium cards */
+  .shadow-soft {
+    box-shadow:
+      0 1px 0 rgba(244, 237, 224, 0.04) inset,
+      0 30px 60px -30px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(244, 237, 224, 0.04);
+  }
+  .shadow-gold {
+    box-shadow:
+      0 0 0 1px rgba(201, 165, 92, 0.32),
+      0 24px 48px -24px rgba(201, 165, 92, 0.18);
+  }
+
+  /* Gradient stroke utility (for hairlines that fade) */
+  .hairline-fade-x {
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      var(--color-hairline-strong) 20%,
+      var(--color-hairline-strong) 80%,
+      transparent
+    );
+    height: 1px;
+  }
+
+  /* Reveal-on-load helper (CSS-only) */
+  @keyframes hairline-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  .animate-hairline { animation: hairline-grow 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; transform-origin: left; }
 }
+
+/* ============================================================
+   Editorial prose (used by blog post body)
+   ============================================================ */
+.prose-editorial p {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--color-ivory-dim);
+  margin: 1.5em 0;
+}
+.prose-editorial h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.15;
+  color: var(--color-ivory);
+  margin: 2.5em 0 0.5em;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+.prose-editorial h2::before {
+  content: "·";
+  color: var(--color-gold);
+  margin-right: 0.5em;
+}
+.prose-editorial p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-size: 4em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.05em 0.15em 0 0;
+  color: var(--color-gold);
+  font-weight: 300;
+}
+
+/* ============================================================
+   react-datepicker theming overrides (reinforced from datepicker.css)
+   ============================================================ */
+.react-datepicker {
+  background-color: var(--color-ink-3) !important;
+  border: 1px solid var(--color-hairline-strong) !important;
+  font-family: var(--font-sans) !important;
+  border-radius: 0 !important;
+}
+.react-datepicker__header {
+  background-color: var(--color-ink-2) !important;
+  border-bottom: 1px solid var(--color-hairline-strong) !important;
+}
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: var(--color-ivory) !important;
+}
+.react-datepicker__day:hover {
+  background-color: var(--color-ink-4) !important;
+  border-radius: 0 !important;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: var(--color-vermillion) !important;
+  color: var(--color-ivory) !important;
+  border-radius: 0 !important;
+}
+.react-datepicker__day--disabled { color: var(--color-ivory-faint) !important; }

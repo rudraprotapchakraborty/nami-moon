@@ -1,19 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import Image from "next/image";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import {
-  GiKnifeFork,
-  GiSushis,
-  GiNoodles,
-  GiChiliPepper,
-  GiIceCreamScoop,
-} from "react-icons/gi";
-import { TbSoupFilled } from "react-icons/tb";
-import { MdRamenDining } from "react-icons/md";
-import { BiSolidBowlRice, BiSolidDrink } from "react-icons/bi";
-import { RiDrinksFill } from "react-icons/ri";
+import React, { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch } from "react-icons/fi";
 
 type MenuItem = {
@@ -26,285 +14,238 @@ type MenuItem = {
   description?: string;
   image?: string;
 };
-
 type MenuData = Record<string, MenuItem[]>;
 
-const categoryIcons: Record<string, React.ReactElement> = {
-  All: <GiKnifeFork className="text-lg" />,
-  Appetizers: <GiKnifeFork className="text-lg" />,
-  Sushi: <GiSushis className="text-lg" />,
-  Noodles: <GiNoodles className="text-lg" />,
-  "Nami Moon Special Drinks": <BiSolidDrink className="text-lg" />,
-  Soup: <TbSoupFilled className="text-lg" />,
-  Ramen: <MdRamenDining className="text-lg" />,
-  Rice: <BiSolidBowlRice className="text-lg" />,
-  Curry: <GiChiliPepper className="text-lg" />,
-  Desserts: <GiIceCreamScoop className="text-lg" />,
-  Drinks: <RiDrinksFill className="text-lg" />,
-};
+const ease = [0.22, 1, 0.36, 1] as const;
+
+function priceLabel(item: MenuItem): string {
+  if (item.price !== undefined) return `৳ ${item.price}`;
+  if (item.price_5pcs && item.price_10pcs)
+    return `৳ ${item.price_5pcs} / ${item.price_10pcs}`;
+  if (item.price_chicken && item.price_beef)
+    return `Chicken ৳ ${item.price_chicken} · Beef ৳ ${item.price_beef}`;
+  return "—";
+}
+
+function getPriceNum(item: MenuItem): number {
+  if (typeof item.price === "number") return item.price;
+  return (
+    item.price_5pcs ??
+    item.price_10pcs ??
+    item.price_chicken ??
+    item.price_beef ??
+    0
+  );
+}
 
 export default function MenuPageClient() {
   const [menuData, setMenuData] = useState<MenuData>({});
-  const [selectedTab, setSelectedTab] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none");
-  const [isLoading, setIsLoading] = useState(true);
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
+  const [tab, setTab] = useState("All");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"asc" | "desc" | "none">("none");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
+    setLoading(true);
     fetch("/menu.json")
-      .then((res) => res.json())
+      .then((r) => r.json())
       .then((data) => {
         setMenuData(data);
-        setIsLoading(false);
+        setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error loading menu data:", error);
-        setIsLoading(false);
+      .catch((err) => {
+        console.error("Error loading menu data:", err);
+        setLoading(false);
       });
   }, []);
 
-  const tabs = ["All", ...Object.keys(menuData)];
+  const tabs = useMemo(() => ["All", ...Object.keys(menuData)], [menuData]);
 
-  const getPrice = (item: MenuItem): number => {
-    if (typeof item.price === "number") return item.price;
-    if (typeof item.price === "string") return 0;
-    return (
-      item.price_5pcs ||
-      item.price_10pcs ||
-      item.price_chicken ||
-      item.price_beef ||
-      0
+  const groupedItems = useMemo(() => {
+    const filteredEntries = Object.entries(menuData).filter(
+      ([cat]) => tab === "All" || cat === tab
     );
-  };
+    const lower = search.toLowerCase();
+    return filteredEntries
+      .map(([cat, items]) => {
+        let filtered = items.filter((it) =>
+          it.name.toLowerCase().includes(lower)
+        );
+        if (sort !== "none") {
+          filtered = [...filtered].sort((a, b) =>
+            sort === "asc"
+              ? getPriceNum(a) - getPriceNum(b)
+              : getPriceNum(b) - getPriceNum(a)
+          );
+        }
+        return [cat, filtered] as const;
+      })
+      .filter(([, items]) => items.length > 0);
+  }, [menuData, tab, search, sort]);
 
-  const filteredItems = Object.entries(menuData)
-    .filter(([category]) => selectedTab === "All" || category === selectedTab)
-    .flatMap(([_, items]) => items)
-    .filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-  const sortedItems =
-    sortOrder === "none"
-      ? filteredItems
-      : [...filteredItems].sort((a, b) => {
-          const priceA = getPrice(a);
-          const priceB = getPrice(b);
-          return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
-        });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: (i: number) => ({
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    }),
-  };
+  const totalCount = groupedItems.reduce((acc, [, it]) => acc + it.length, 0);
 
   return (
-    <motion.div
-      className="relative min-h-screen text-white bg-black overflow-hidden"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      ref={sectionRef}
-    >
-      {/* Animated red gate background */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
-        <div className="w-full h-[50vh] bg-custom-red-600 rounded-b-[100%] shadow-2xl" />
-      </motion.div>
-
-      <div className="relative z-10 px-4 py-16 max-w-7xl mx-auto">
-        {/* Heading */}
-        <motion.h1
-          className="text-5xl md:text-6xl font-medium text-center mb-6 text-black font-googly"
-          variants={itemVariants}
-        >
-          OUR MENU
-        </motion.h1>
-
-        <motion.div
-          className="h-1 w-24 bg-black mx-auto rounded-full mb-12"
-          initial={{ width: 0 }}
-          animate={{ width: 96 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-        />
-
-        {/* Tabs */}
-        <motion.div
-          className="flex flex-wrap gap-3 mb-10 justify-center"
-          variants={itemVariants}
-        >
-          <AnimatePresence>
-            {tabs.map((tab) => (
-              <motion.button
-                key={tab}
-                onClick={() => setSelectedTab(tab)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-googly transition-all ${
-                  selectedTab === tab
-                    ? "bg-custom-red-500 text-white shadow-lg shadow-custom-red-500/20"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                layout
-              >
-                {categoryIcons[tab] || <GiKnifeFork className="text-lg" />}
-                <span>{tab}</span>
-              </motion.button>
-            ))}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Search + Sort */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center gap-4 mb-10"
-          variants={itemVariants}
-        >
-          <div className="w-full md:w-1/2 relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search menu..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-10 py-3 rounded-full bg-gray-800/80 text-white border border-gray-700 focus:border-custom-red-500 focus:outline-none focus:ring-1 focus:ring-custom-red-500 font-googly"
-            />
+    <div className="bg-ink min-h-screen text-ivory">
+      {/* Header banner */}
+      <section className="relative pt-36 md:pt-44 pb-20 noise overflow-hidden border-b border-hairline">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-7">
+              <div className="flex items-center gap-4 mb-8">
+                <span className="eyebrow">N° 02 · The Menu</span>
+                <span className="block h-px w-16 bg-gold/50" />
+              </div>
+              <h1 className="display-xl text-ivory text-balance">
+                A tasting of{" "}
+                <span className="italic font-light text-gold">all of Asia,</span>{" "}
+                three plates at a time.
+              </h1>
+            </div>
+            <div className="lg:col-span-4 lg:col-start-9 self-end">
+              <p className="text-ivory-muted text-base leading-relaxed">
+                Built around what arrived this morning. Categories rotate with
+                the season; pricing is in Bangladeshi Taka (৳).
+              </p>
+            </div>
           </div>
-          <div className="flex gap-2">
-            {["asc", "desc", "none"].map((order) => (
-              <motion.button
-                key={order}
-                onClick={() => setSortOrder(order as "asc" | "desc" | "none")}
-                className={`px-4 py-2 rounded-full font-googly transition-all ${
-                  sortOrder === order
-                    ? "bg-custom-red-700 text-white"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {order === "asc" ? "Price ↑" : order === "desc" ? "Price ↓" : "Reset"}
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Loading / No results / Menu grid */}
-        {isLoading ? (
-          <motion.div
-            className="flex justify-center items-center py-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-16 h-16 border-t-4 border-custom-red-500 border-solid rounded-full animate-spin"></div>
-          </motion.div>
-        ) : sortedItems.length === 0 ? (
-          <motion.div
-            className="text-center py-16"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <p className="text-xl text-gray-400 font-googly">
-              No menu items found. Try a different search term.
-            </p>
-          </motion.div>
-        ) : (
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-          >
-            <AnimatePresence>
-              {sortedItems.map((item, index) => (
-                <motion.div
-                  key={`${item.name}-${index}`}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-xl border border-gray-700/50"
-                  variants={cardVariants}
-                  custom={index}
-                  whileHover={{
-                    y: -5,
-                    boxShadow:
-                      "0 20px 25px -5px rgba(255, 59, 59, 0.2), 0 10px 10px -5px rgba(255, 59, 59, 0.1)",
-                  }}
-                  transition={{ duration: 0.3 }}
-                  layout
-                >
-                  <div className="relative h-48 w-full overflow-hidden">
-                    <motion.div
-                      className="relative h-full w-full"
-                      initial={{ scale: 1 }}
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.5 }}
+      {/* Sticky filter bar */}
+      <div className="sticky top-16 md:top-20 z-30 bg-ink/85 backdrop-blur-xl border-b border-hairline">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-4">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+            {/* Tabs */}
+            <div className="flex-1 overflow-x-auto no-scrollbar -mx-6 px-6">
+              <div className="flex items-center gap-x-7 gap-y-2 min-w-max pb-1">
+                {tabs.map((t) => {
+                  const sel = tab === t;
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => setTab(t)}
+                      className={`relative whitespace-nowrap text-[11px] tracking-[0.28em] uppercase font-medium transition-colors ${
+                        sel ? "text-gold" : "text-ivory-muted hover:text-ivory"
+                      }`}
                     >
-                      <Image
-                        src={item.image || "/logo.png"}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </motion.div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                  </div>
-                  <div className="p-5 space-y-3">
-                    <h3 className="text-lg font-semibold font-googly">{item.name}</h3>
-                    {item.description && (
-                      <p className="text-sm text-gray-300 font-googly">{item.description}</p>
-                    )}
-                    <div className="flex justify-between items-center">
-                      <p className="text-custom-red-400 font-bold font-googly">
-                        ৳{" "}
-                        {item.price ??
-                          item.price_5pcs ??
-                          item.price_10pcs ??
-                          item.price_chicken ??
-                          item.price_beef ??
-                          "MRP"}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        )}
+                      {t}
+                      {sel && (
+                        <motion.span
+                          layoutId="menu-page-underline"
+                          className="absolute -bottom-[18px] left-0 right-0 h-px bg-gold"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Search + sort */}
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1 lg:w-72">
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-ivory-faint h-4 w-4" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search dishes…"
+                  className="w-full bg-ink-2 border border-hairline-strong text-sm text-ivory placeholder:text-ivory-faint pl-10 pr-3 py-2.5 focus:outline-none focus:border-gold transition-colors"
+                />
+              </div>
+              <div className="flex items-center text-[11px] tracking-[0.28em] uppercase">
+                {(["asc", "desc", "none"] as const).map((o) => (
+                  <button
+                    key={o}
+                    onClick={() => setSort(o)}
+                    className={`px-3 py-2 border-y border-r first:border-l border-hairline-strong transition-colors ${
+                      sort === o
+                        ? "text-gold border-gold/60"
+                        : "text-ivory-muted hover:text-ivory"
+                    }`}
+                  >
+                    {o === "asc" ? "↑" : o === "desc" ? "↓" : "—"}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </motion.div>
+
+      {/* Grid */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          {loading ? (
+            <div className="py-32 text-center text-ivory-muted text-sm tracking-widest uppercase">
+              Loading…
+            </div>
+          ) : totalCount === 0 ? (
+            <div className="py-32 text-center">
+              <p className="font-display text-3xl text-ivory-muted">
+                Nothing matches that search.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-24">
+              <AnimatePresence mode="popLayout">
+                {groupedItems.map(([cat, items], gi) => (
+                  <motion.section
+                    key={cat}
+                    layout
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease, delay: gi * 0.04 }}
+                  >
+                    <header className="flex items-end justify-between gap-6 mb-10 pb-5 border-b border-hairline-strong">
+                      <div className="flex items-center gap-5">
+                        <span className="font-display text-3xl md:text-4xl text-gold">
+                          {String(gi + 1).padStart(2, "0")}
+                        </span>
+                        <h2 className="font-display text-3xl md:text-4xl text-ivory">
+                          {cat}
+                        </h2>
+                      </div>
+                      <span className="eyebrow-ivory">
+                        {items.length} {items.length === 1 ? "Plate" : "Plates"}
+                      </span>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+                      {items.map((item, i) => (
+                        <article
+                          key={`${item.name}-${i}`}
+                          className="group flex items-baseline gap-4 py-5 border-b border-hairline hover:border-gold/30 transition-colors"
+                        >
+                          <span className="font-display text-base text-ivory-faint w-8 shrink-0">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-baseline gap-3">
+                              <h3 className="font-display text-xl md:text-2xl text-ivory truncate group-hover:text-gold transition-colors">
+                                {item.name}
+                              </h3>
+                              <div className="flex-1 mt-3 border-b border-dotted border-hairline-strong" />
+                              <span className="font-display text-lg text-gold whitespace-nowrap">
+                                {priceLabel(item)}
+                              </span>
+                            </div>
+                            {item.description && (
+                              <p className="mt-2 text-sm text-ivory-muted leading-relaxed">
+                                {item.description}
+                              </p>
+                            )}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </motion.section>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
   );
 }

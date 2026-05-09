@@ -1,128 +1,113 @@
-'use client';
+"use client";
 
-import React, { useRef } from "react";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
-const MeetOurChefs: React.FC = () => {
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+const ease = [0.22, 1, 0.36, 1] as const;
 
-  const textVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.2,
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    })
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  return (
-    <motion.section 
-      ref={sectionRef}
-      className="py-20 px-4 bg-gray-900 relative overflow-hidden"
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-    >
-      {/* Background gradient */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 1.2 }}
-      />
-      
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-        <div className="space-y-8">
-          <motion.h2 
-            className="text-4xl font-medium text-custom-red-500 font-googly"
-            variants={textVariants}
-            custom={0}
-          >
-            Meet Our Masterful Chefs – The Heart of Our Kitchen
-          </motion.h2>
-          
-          <motion.p 
-            className="text-gray-300 text-lg leading-relaxed"
-            variants={textVariants}
-            custom={1}
-          >
-            From hand-rolled sushi and fiery stir-fries to rich curries and perfectly grilled meats, our chefs craft
-            each dish with precision and creativity. Their dedication to sourcing the finest ingredients and
-            maintaining the highest standards ensures an unforgettable dining experience every time you visit.
-          </motion.p>
-          
-          <motion.div
-            variants={textVariants}
-            custom={2}
-            className="pt-4"
-          >
-            <motion.a
-              href="/menu"
-              className="inline-block px-8 py-3 bg-custom-red-600 text-white font-googly rounded-full hover:bg-custom-red-700 transition-colors duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Explore Our Menu
-            </motion.a>
-          </motion.div>
-        </div>
-        
-        <motion.div 
-          className="relative h-[500px] rounded-lg overflow-hidden shadow-2xl"
-          variants={imageVariants}
-        >
-          <motion.div
-            className="absolute inset-0 z-10"
-            initial={{ background: "linear-gradient(to right, rgba(0,0,0,0.7) 0%, transparent 100%)" }}
-            whileHover={{ background: "linear-gradient(to right, rgba(0,0,0,0.4) 0%, transparent 100%)" }}
-            transition={{ duration: 0.3 }}
-          />
-          
-          <motion.div
-            initial={{ scale: 1 }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 1.5 }}
-            className="relative h-full w-full"
-          >
-            <Image
-              src="/team.jpg"
-              alt="Our talented chef team"
-              fill
-              style={{ objectFit: "cover" }}
-              className="rounded-lg"
-            />
-          </motion.div>
-          
-          <motion.div
-            className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 z-20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.5 }}
-          >
-            <h3 className="text-white text-xl font-googly mb-2">Culinary Excellence</h3>
-            <p className="text-gray-300 text-sm">Our team brings together decades of experience from around the world</p>
-          </motion.div>
-        </motion.div>
-      </div>
-    </motion.section>
-  );
+const fade = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
 };
 
-export default MeetOurChefs;
+export default function MeetOurChefs() {
+  return (
+    <section className="relative bg-ink py-32 md:py-40 overflow-hidden">
+      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          {/* Left text */}
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            className="lg:col-span-5 order-2 lg:order-1"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <span className="eyebrow">N° 04</span>
+              <span className="block h-px w-16 bg-gold/50" />
+              <span className="eyebrow-ivory">The Kitchen</span>
+            </div>
+
+            <h2 className="display-lg text-ivory text-balance mb-10">
+              The hands that{" "}
+              <span className="italic font-light text-gold">shape</span> every plate.
+            </h2>
+
+            <div className="space-y-6 text-ivory-dim text-base leading-relaxed font-light max-w-lg">
+              <p>
+                Hand-rolled sushi, tempered woks, simmered curries and
+                charcoal-grilled meats — each dish is the product of
+                decades of training and a fierce commitment to ingredient.
+              </p>
+              <p className="text-ivory-muted text-sm">
+                Our chefs source weekly, plate to order, and refuse to make
+                anything they wouldn't serve to family.
+              </p>
+            </div>
+
+            <Link
+              href="/about"
+              className="group mt-12 inline-flex items-center gap-4 text-ivory text-[11px] tracking-[0.32em] uppercase border-b border-hairline-strong hover:border-gold pb-2 transition-colors"
+            >
+              Meet the Team
+              <Arrow />
+            </Link>
+          </motion.div>
+
+          {/* Right image with overlay caption */}
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            className="lg:col-span-7 order-1 lg:order-2"
+          >
+            <div className="relative">
+              {/* Vertical caption rail */}
+              <div className="hidden md:flex absolute -left-12 top-0 bottom-0 flex-col items-center justify-between py-6">
+                <span className="vertical-rl eyebrow-ivory tracking-[0.5em]">
+                  Chapter 04 · The Kitchen
+                </span>
+                <span className="block w-px h-16 bg-gold/50" />
+              </div>
+
+              <div className="relative h-[560px] md:h-[640px] overflow-hidden bg-ink-3 group">
+                <Image
+                  src="/team.jpg"
+                  alt="The Nami Moon kitchen team"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+
+                {/* Overlay caption card */}
+                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 border-t border-hairline-strong bg-ink/30 backdrop-blur-md">
+                  <div className="flex items-end justify-between gap-6">
+                    <div>
+                      <div className="eyebrow mb-3">A Quiet Excellence</div>
+                      <p className="font-display text-xl md:text-2xl text-ivory text-balance max-w-md leading-tight">
+                        Decades of technique, distilled into a single pass of the knife.
+                      </p>
+                    </div>
+                    <span className="font-display text-4xl text-gold leading-none">04</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="square">
+      <path d="M2 7h10M8 3l4 4-4 4" />
+    </svg>
+  );
+}
